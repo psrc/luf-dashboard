@@ -56,7 +56,7 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       
     })
     
-    run_comparison <- eventReactive(input$go, {
+    baseyears <- eventReactive(input$go, {
       year <- paste0("yr", input$year)
 
       # for each run, find its baseyear
@@ -68,10 +68,10 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       b[run %in% names(paths)]
     })
     
-    cTable <- eventReactive(input$go, {
+    table <- eventReactive(input$go, {
       strdt <- strdata
       alldt <- alldata
-      byears <- run_comparison()
+      byears <- baseyears()
 
       runnames <- get_runnames(input$runs)
 
