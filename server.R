@@ -4,56 +4,25 @@ server <- function(input, output, session) {
   run_choice_server('runChoice_one', root_dir = rund)
   run_choice_server('runChoice_multi', root_dir = rund)
   
-  # display absolute paths
   paths <- eventReactive(input$`runChoice_multi-go`, {
+    # return absolute paths and names
+    
     runs <- input$`runChoice_multi-allRuns`
-    runnames <- map(runs, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist() 
+    runnames <- get_runnames(runs)
     names(runs) <- runnames
     return(runs)
   })
   
   output$disp_multi <- renderDT({
-    # run_comparison()
-    # strdt()
-    cTable()
-    # datatable(alldt())
+    run_comp_table()
   })
 
-  # return Run Comparison sidebar controls
-  cTable <- multi_scat_map_data_server('runComp', alldata = alldt(), strdata = strdt(), paths())
+  # return Run Comparison sidebar controls &
+  # return Run Comparison output table
+  run_comp_table <- multi_scat_map_data_server('runComp', alldata = alldt(), strdata = strdt(), paths())
  
-  # run_comparison <- eventReactive(input$`runComp-go`,{
-  #   year <- paste0("yr", input$`runComp-year`)
-  #   # browser()
-  #   # for each run, find its baseyear
-  #   a <- alldt()[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
-  #   b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
-  #   
-  #   # return a df and subset for chosen runs
-  #   b <- a[, .(run)][, baseyear := b.yrs]
-  #   b[run %in% names(paths())]
-  # })
-  
-  # output$strdtavail <- reactive({
-  #   # Check if runs 1 & 2 exist in strdt(), if not conditional panel disabled
-  #   strdt <- strdt()
-  # 
-  #   runnames <- map(input$`runComp-runs`, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist()
-  #   c1 <- runnames[1] %in% strdt[, run]
-  #   c2 <- runnames[2] %in% strdt[, run]
-  #   v <- c1 == c2
-  #   return(v)
-  # })
-  
-  
- 
-  strdt <- eventReactive(input$`runComp-go`, {
+  strdt <- eventReactive(input$`runComp-go`, { ########may need to change the trigger to input$`runChoice-multi`
     # build structure type (sf/mf) indicators source table
-    
-    attribute <- c("population", "households","employment", "residential_units")
-    geography <- c( "zone", "faz", "city")
-    years <- seq(2014, 2050)
-    luv.years <- c(2014, 2015, 2020, 2025, 2030, 2035, 2040)
     
     runs <- paths()
     
@@ -93,11 +62,6 @@ server <- function(input, output, session) {
   # build general attributes source table
   alldt <- eventReactive(input$`runComp-go`,{ ########may need to change the trigger to input$`runChoice-multi`
 
-    attribute <- c("population", "households","employment", "residential_units")
-    geography <- c( "zone", "faz", "city")
-    years <- seq(2014, 2050)
-    luv.years <- c(2014, 2015, 2020, 2025, 2030, 2035, 2040)
-    
     # extract runs from abs paths
     runs <- paths()
     
@@ -134,54 +98,15 @@ server <- function(input, output, session) {
     return(df)
   })
   
-  # cTable <- eventReactive(input$`runComp-go`, {
+  # output$strdtavail <- reactive({
+  #   # Check if runs 1 & 2 exist in strdt(), if not conditional panel disabled
   #   strdt <- strdt()
-  #   alldt <- alldt()
-  #   byears <- run_comparison()
-  #   
-  #   runnames <- get_runnames(input$`runComp-runs`)
-  #   # runnames <- map(input$`runComp-runs`, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist()
-  #   
-  #   if (is.null(input$`runComp-structure`) | input$`runComp-structure` == "All" | (input$`runComp-indicator` %in% c("Total Population", "Employment")) |
-  #       (input$`runComp-indicator` %in% c("Households", "Residential Units") & input$`runComp-geography` %in% c("zone", "city")) ){
   # 
-  #     # run 1
-  #     b1 <- byears[run == runnames[1],][['baseyear']]
-  #     dt1 <- alldt[run == runnames[1] & geography == input$`runComp-geography` & indicator == input$`runComp-indicator`,
-  #                  .(name_id, geography, indicator, get(b1), get(paste0('yr',input$`runComp-year`)))]
-  #     setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
-  # 
-  #     # run 2
-  #     b2 <- byears[run == runnames[2],][['baseyear']]
-  #     dt2 <- alldt[run == runnames[2] & geography == input$`runComp-geography` & indicator == input$`runComp-indicator`,
-  #                  .(name_id, get(b2),get(paste0('yr', input$`runComp-year`)))]
-  #     setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
-  # 
-  #     dt <- merge(dt1, dt2, by = 'name_id')
-  #   } else {
-  #     # run 1
-  # 
-  #     b1 <- str_extract(byears[run == runnames[1],][['baseyear']], "\\d+")
-  #     dt1 <- strdt[run == runnames[1] & geography == input$`runComp-geography` & (year == b1 | year == input$`runComp-year`) & indicator == input$`runComp-indicator` & strtype == input$`runComp-structure`]
-  #     dt1.cast <- dcast.data.table(dt1, name_id + indicator + geography ~ year, value.var = "estimate")
-  #     setnames(dt1.cast, colnames(dt1.cast)[4:5], c('base_estrun1', 'estrun1'))
-  # 
-  #     # run 2
-  #     b2 <- str_extract(byears[run == runnames[2],][['baseyear']], "\\d+")
-  #     dt2 <- strdt[run == runnames[2] & geography == input$`runComp-geography` & (year == b2 | year == input$`runComp-year`)  & indicator == input$`runComp-indicator` & strtype == input$`runComp-structure`]
-  #     dt2.cast <- dcast.data.table(dt2, name_id ~ year, value.var = "estimate")
-  #     setnames(dt2.cast, colnames(dt2.cast)[2:3], c('base_estrun2', 'estrun2'))
-  #     dt <- merge(dt1.cast, dt2.cast, by = 'name_id')
-  #   }
-  #   dt[,"diff" := (estrun1-estrun2)]
-  # 
-  #   # switch(as.integer(input$`runComp-geography`),
-  #   #        merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
-  #   #        merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
-  #   #        merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames("city_name", "Name")
-  #   # )
-  #   return(dt)
+  #   runnames <- map(input$`runComp-runs`, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist()
+  #   c1 <- runnames[1] %in% strdt[, run]
+  #   c2 <- runnames[2] %in% strdt[, run]
+  #   v <- c1 == c2
+  #   return(v)
   # })
-
   # outputOptions(output, 'strdtavail', suspendWhenHidden = FALSE)
 }

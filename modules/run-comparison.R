@@ -1,3 +1,6 @@
+# This module returns the selection widgets on the Run Comparison tab and returns a filtered table output
+# for visuals under Run Comparison
+
 multi_scat_map_data_ui <- function(id) {
   ns <- NS(id)
  
@@ -53,7 +56,7 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       
     })
     
-    run_comparison <- eventReactive(input$go,{
+    run_comparison <- eventReactive(input$go, {
       year <- paste0("yr", input$year)
 
       # for each run, find its baseyear
@@ -71,7 +74,6 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       byears <- run_comparison()
 
       runnames <- get_runnames(input$runs)
-      # runnames <- map(input$`runComp-runs`, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist()
 
       if (is.null(input$structure) | input$structure == "All" | (input$indicator %in% c("Total Population", "Employment")) |
           (input$indicator %in% c("Households", "Residential Units") & input$geography %in% c("zone", "city")) ){
@@ -90,8 +92,8 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
 
         dt <- merge(dt1, dt2, by = 'name_id')
       } else {
+        
         # run 1
-
         b1 <- str_extract(byears[run == runnames[1],][['baseyear']], "\\d+")
         dt1 <- strdt[run == runnames[1] & geography == input$geography & (year == b1 | year == input$year) & indicator == input$indicator & strtype == input$structure]
         dt1.cast <- dcast.data.table(dt1, name_id + indicator + geography ~ year, value.var = "estimate")
