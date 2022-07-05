@@ -22,15 +22,15 @@ fluidPage(
                                   type = 'tabs',
                                   tabPanel('Run Comparison',
                                            value = 'runcomparison',
-                                           DTOutput('disp_multi')
-                                           
-                                           
+                                           plot_map_tbl_ui('runCompContent')
                                   ), # end tabPanel
+                                  
                                   tabPanel('Something Else',
                                            value = 'se',
                                            mainPanel(width = 9)
                                     
                                   ), # end tabPanel
+                                  
                                   tabPanel('Other',
                                            value = 'o',
                                            mainPanel(width = 9)

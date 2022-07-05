@@ -5,3 +5,37 @@ get_runnames <- function(runs) {
     map(., ~pluck(.x, length(.x))) %>% 
     unlist()
 }
+
+
+# plots -------------------------------------------------------------------
+
+
+scatterplot <- function(table, sourcename, xcolumn, ycolumn, xtitle, ytitle) {
+  # Creates a Plotly scatterplot. Requires reactive table, string source name and string x&y axis titles.
+  data <- table
+  key <- data$name_id # uniquely identify geo for Plotly
+  p <- plot_ly(data,
+               type = 'scatter',
+               x = ~xcolumn,
+               y = ~ycolumn,
+               name = "",
+               source = sourcename,
+               text = ~paste0("ID: ", name_id,
+                              "<br>Name: ", Name),
+               key = key, # will appear in 'eventdata'
+               mode = 'markers',
+               showlegend = F)%>%
+    add_trace(x=c(0,~max(xcolumn)),
+              y=c(0,~max(xcolumn)),
+              color= I("grey"),
+              opacity = .6,
+              mode = "lines",
+              showlegend = F)%>%
+    layout(font = list(family="Segoe UI", size = 13.5),
+           title = " ",
+           xaxis = list(title = xtitle),
+           yaxis = list(title = ytitle),
+           margin = list(l=100, b=100, t=90, r=100)
+    )
+  p
+}

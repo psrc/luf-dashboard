@@ -13,14 +13,14 @@ server <- function(input, output, session) {
     return(runs)
   })
   
-  output$disp_multi <- renderDT({
-    run_comp_table()
-  })
-
-  # return Run Comparison sidebar controls &
-  # return Run Comparison output table
-  run_comp_table <- multi_scat_map_data_server('runComp', alldata = alldt(), strdata = strdt(), paths())
+  # return Run Comparison sidebar controls & Run Comparison output table
+  run_comp_table <- multi_scat_map_data_server('runComp', alldt(), strdt(), paths())
  
+  observeEvent(input$`runComp-go`, {
+    plot_map_tbl_server('runCompContent', run_comp_table(), input$`runComp-runs`)
+  })
+  
+  
   strdt <- eventReactive(input$`runComp-go`, { ########may need to change the trigger to input$`runChoice-multi`
     # build structure type (sf/mf) indicators source table
     

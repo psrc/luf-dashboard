@@ -2,6 +2,7 @@ library(shiny)
 library(shinyFiles)
 library(fs)
 library(shinythemes)
+library(sf)
 library(plotly)
 library(leaflet)
 library(DT)
@@ -16,6 +17,17 @@ geography <- c( "zone", "faz", "city")
 years <- seq(2014, 2050)
 luv.years <- c(2014, 2015, 2020, 2025, 2030, 2035, 2040)
 
+# lookups
+faz.lookup <- fread(file.path('data', "faz_names.txt"))
+zone.lookup <- fread(file.path('data', "zones.txt"))
+# city.lookup <- read.table(file.path(dsn, "cities.csv"), header =TRUE, sep = ",")
+
+# spatial features
+arc.root <- 'https://services6.arcgis.com/GWxg6t7KXELn1thE/arcgis/rest/services'
+zone.link <- 'Transportation_Analysis_Zones_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
+faz.link <- 'FAZ_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
+
 source('modules/functions.R')
 source('modules/run-choice.R')
 source('modules/run-comparison.R')
+source('modules/plot-map-table.R')

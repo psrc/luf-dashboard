@@ -16,9 +16,10 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
     
     output$uiRunComp <- renderUI({ #if Enter clicked and on Run Comparison tab
       
-      geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city')
+      # geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city')
+      geogs <- c("TAZ"='zone', "FAZ"='faz')
       inds <- c("Total Population", "Households", "Employment", "Residential Units")
-      years <- 2014:2050
+      # years <- 2014:2050
       
       tagList(
         selectInput(session$ns('runs'),
@@ -108,11 +109,11 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       }
       dt[,"diff" := (estrun1-estrun2)]
 
-      # switch(as.integer(input$`runComp-geography`),
-      #        merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
-      #        merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
-      #        merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames("city_name", "Name")
-      # )
+      dt <- switch(input$geography,
+             zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
+             faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id")#,
+             # merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames("city_name", "Name")
+      )
       return(dt)
     })
 
