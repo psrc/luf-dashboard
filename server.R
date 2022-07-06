@@ -13,13 +13,16 @@ server <- function(input, output, session) {
     return(runs)
   })
   
+  # Run Comparison ----
+  
   # return Run Comparison sidebar controls & Run Comparison output table
-  run_comp_table <- multi_scat_map_data_server('runComp', alldt(), strdt(), paths())
+  run_comp_table <- multi_plot_map_data_server('runComp', alldt(), strdt(), paths())
  
   observeEvent(input$`runComp-go`, {
-    plot_map_tbl_server('runCompContent', run_comp_table(), input$`runComp-runs`)
+    plot_map_tbl_server('runCompContent', run_comp_table$table(), run_comp_table$dttable(), input$`runComp-runs`)
   })
   
+  # Data ----
   
   strdt <- eventReactive(input$`runComp-go`, { ########may need to change the trigger to input$`runChoice-multi`
     # build structure type (sf/mf) indicators source table
@@ -59,9 +62,10 @@ server <- function(input, output, session) {
     return(dt2)
   })
   
-  # build general attributes source table
+  
   alldt <- eventReactive(input$`runComp-go`,{ ########may need to change the trigger to input$`runChoice-multi`
-
+    # build general attributes source table
+    
     # extract runs from abs paths
     runs <- paths()
     

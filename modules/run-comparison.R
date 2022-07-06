@@ -1,7 +1,8 @@
 # This module returns the selection widgets on the Run Comparison tab and returns a filtered table output
 # for visuals under Run Comparison
+# This module will also return multiple outputs 
 
-multi_scat_map_data_ui <- function(id) {
+multi_plot_map_data_ui <- function(id) {
   ns <- NS(id)
  
   tagList(
@@ -10,7 +11,7 @@ multi_scat_map_data_ui <- function(id) {
   
 }
 
-multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
+multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -116,7 +117,30 @@ multi_scat_map_data_server <- function(id, alldata, strdata, paths) {
       )
       return(dt)
     })
+    
+    dttable <- eventReactive(input$go, {
+      # clean up column names of table() to render to DT
+      
+      runnames <- get_runnames(input$runs)
+      runnames.trim <- get_trim_runnames(runnames)
+      baseyears <- baseyears()
 
+      dt <- table()[, .(County, indicator, geography, name_id, Name, base_estrun1, estrun1, base_estrun2, estrun2, diff)]
+      setnames(dt, c("County", "Indicator", "Geography", "ID", "Name",
+                     paste("Base", get_trim_runnames(baseyears[1, ][['run']]), str_extract(baseyears[1, ][['baseyear']], "\\d+")),
+                     paste(runnames.trim[1], input$year),
+                     paste("Base", get_trim_runnames(baseyears[2, ][['run']]), str_extract(baseyears[2, ][['baseyear']], "\\d+")),
+                     paste(runnames.trim[2], input$year),
+                     "Difference"))
+      return(dt)
+    })
+    
+    list(
+      # this module will return multiple outputs 
+      baseyears = reactive(baseyears()),
+      table = reactive(table()),
+      dttable = reactive(dttable())
+    )
     
     })
   }

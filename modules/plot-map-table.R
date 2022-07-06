@@ -27,7 +27,7 @@ plot_map_tbl_ui <- function(id) {
   
 }
 
-plot_map_tbl_server <- function(id, data, runs) {
+plot_map_tbl_server <- function(id, data, dttable, runs) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -37,7 +37,7 @@ plot_map_tbl_server <- function(id, data, runs) {
     # merge with resp geog shapefile 
     
     output$dtTable <- renderDT({
-      datatable(data)
+      datatable(dttable)
     })
     
     output$plot <- renderPlotly({
