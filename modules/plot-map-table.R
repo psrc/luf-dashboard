@@ -27,24 +27,51 @@ plot_map_tbl_ui <- function(id) {
   
 }
 
-plot_map_tbl_server <- function(id, data, dttable, runs) {
+plot_map_tbl_server <- function(id, data, dttable, baseyears, geog, runs) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    runnames <- get_runnames(runs)
+    runnames <- reactive(get_runnames(runs))
     
-    # take data
-    # merge with resp geog shapefile 
+    geo <- reactive({
+      switch(geog,
+             taz = "TAZ",
+             faz = "FAZ",
+             city = "City")
+    })
+    
+    shape <- reactive({
+      # shapefile for visualization
+      
+      joinShp2Tbl(geog, data)
+    })
     
     output$dtTable <- renderDT({
       datatable(dttable)
     })
     
     output$plot <- renderPlotly({
-      scatterplot(data, "compare", data$estrun1, data$estrun2, runnames[1], runnames[2])
+      scatterplot(data, "compare", data$estrun1, data$estrun2, runnames()[1], runnames()[2])
     })
     
-    # render to leaflet
+    
+    output$map <- renderLeaflet({
+      
+      s <- shape()
+
+      colorBinResult <- map.colorBins(s$diff)
+      pal <- colorBin(palette = colorBinResult$color, 
+                      bins = colorBinResult$bin, 
+                      domain=s$diff, 
+                      pretty = FALSE)
+
+      # popup setup
+      geo.popup1 <- map.popup(shape(), baseyears, 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
+      # geo.popup3 <- paste0("<strong>Center: </strong>", centers$name_id)
+      # 
+      # Draw the map without selected geographies
+      map <- map.layers(shape(), geo(), paste0("Run difference by ", geo()), geo.popup1, "", pal)
+    })
   })
   
 }

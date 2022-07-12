@@ -19,7 +19,13 @@ server <- function(input, output, session) {
   run_comp_table <- multi_plot_map_data_server('runComp', alldt(), strdt(), paths())
  
   observeEvent(input$`runComp-go`, {
-    plot_map_tbl_server('runCompContent', run_comp_table$table(), run_comp_table$dttable(), input$`runComp-runs`)
+    # browser()
+    plot_map_tbl_server('runCompContent', 
+                        run_comp_table$table(), 
+                        run_comp_table$dttable(),
+                        run_comp_table$baseyears(),
+                        input$`runComp-geography`,
+                        input$`runComp-runs`)
   })
   
   # Data ----

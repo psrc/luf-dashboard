@@ -20,7 +20,6 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
       # geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city')
       geogs <- c("TAZ"='zone', "FAZ"='faz')
       inds <- c("Total Population", "Households", "Employment", "Residential Units")
-      # years <- 2014:2050
       
       tagList(
         selectInput(session$ns('runs'),
@@ -59,6 +58,8 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
     })
     
     baseyears <- eventReactive(input$go, {
+      # returns a data frame of runs and their baseyears
+      
       year <- paste0("yr", input$year)
 
       # for each run, find its baseyear
@@ -71,6 +72,8 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
     })
     
     table <- eventReactive(input$go, {
+      # returns underlying data table for all visuals
+
       strdt <- strdata
       alldt <- alldata
       byears <- baseyears()
@@ -120,16 +123,18 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
     
     dttable <- eventReactive(input$go, {
       # clean up column names of table() to render to DT
-      
+
       runnames <- get_runnames(input$runs)
       runnames.trim <- get_trim_runnames(runnames)
       baseyears <- baseyears()
+      
+      b <- baseyears[run %in% runnames, ]
 
       dt <- table()[, .(County, indicator, geography, name_id, Name, base_estrun1, estrun1, base_estrun2, estrun2, diff)]
       setnames(dt, c("County", "Indicator", "Geography", "ID", "Name",
-                     paste("Base", get_trim_runnames(baseyears[1, ][['run']]), str_extract(baseyears[1, ][['baseyear']], "\\d+")),
+                     paste("Base", runnames.trim[1], str_extract(b[1, ][['baseyear']], "\\d+")),
                      paste(runnames.trim[1], input$year),
-                     paste("Base", get_trim_runnames(baseyears[2, ][['run']]), str_extract(baseyears[2, ][['baseyear']], "\\d+")),
+                     paste("Base", runnames.trim[2], str_extract(b[2, ][['baseyear']], "\\d+")),
                      paste(runnames.trim[2], input$year),
                      "Difference"))
       return(dt)

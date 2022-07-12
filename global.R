@@ -27,6 +27,11 @@ arc.root <- 'https://services6.arcgis.com/GWxg6t7KXELn1thE/arcgis/rest/services'
 zone.link <- 'Transportation_Analysis_Zones_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
 faz.link <- 'FAZ_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
 
+zone.shape <- st_read(file.path(arc.root, zone.link)) %>% 
+  mutate(name_id = taz)
+faz.shape <- st_read(file.path(arc.root, faz.link)) %>% 
+  mutate(name_id = faz10)
+
 source('modules/functions.R')
 source('modules/run-choice.R')
 source('modules/run-comparison.R')
