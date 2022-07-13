@@ -16,8 +16,9 @@ server <- function(input, output, session) {
   # Run Comparison ----
   
   # return Run Comparison sidebar controls & Run Comparison output table
-  run_comp_table <- multi_plot_map_data_server('runComp', alldt(), strdt(), paths())
- 
+
+  run_comp_table <- multi_plot_map_data_server('runComp', reactive(input$`runChoice_multi-go`), alldt(), strdt(), paths())
+
   observeEvent(input$`runComp-go`, {
     # browser()
     plot_map_tbl_server('runCompContent', 
@@ -119,4 +120,6 @@ server <- function(input, output, session) {
   #   return(v)
   # })
   # outputOptions(output, 'strdtavail', suspendWhenHidden = FALSE)
+  # condition = "(input.indicator == 'Residential Units' | input.indicator == 'Households') && output.strdtavail &&
+  #                                       input.geography == 'faz'",
 }

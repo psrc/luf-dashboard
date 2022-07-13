@@ -11,16 +11,16 @@ multi_plot_map_data_ui <- function(id) {
   
 }
 
-multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
+multi_plot_map_data_server <- function(id, inputgo, alldata, strdata, paths) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     output$uiRunComp <- renderUI({ #if Enter clicked and on Run Comparison tab
-      
+
       # geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city')
       geogs <- c("TAZ"='zone', "FAZ"='faz')
       inds <- c("Total Population", "Households", "Employment", "Residential Units")
-      
+
       tagList(
         selectInput(session$ns('runs'),
                     label = 'Compare two runs',
@@ -33,19 +33,16 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
         selectInput(ns('indicator'),
                     label = 'Indicator',
                     choices = inds),
-        
+
         conditionalPanel(condition = "(input.indicator == 'Residential Units' | input.indicator == 'Households') &&
                                                 input.geography == 'faz'",
-          
-          # condition = "(input.indicator == 'Residential Units' | input.indicator == 'Households') && output.strdtavail &&
-          #                                       input.geography == 'faz'",
                          ns = ns,
                          radioButtons(ns("structure"),
                                       label = h5("Categories"),
                                       choices = list("All" = "All", "Single Family" = "singlefamily", "Multi-Family" = "multifamily"),
                                       selected = "All")
         ),
-        
+
         selectInput(ns('year'),
                     label = 'Year',
                     choices = years,
@@ -54,7 +51,7 @@ multi_plot_map_data_server <- function(id, alldata, strdata, paths) {
         actionButton(ns('go'),
                      label = 'Enter')
       )
-      
+
     })
     
     baseyears <- eventReactive(input$go, {

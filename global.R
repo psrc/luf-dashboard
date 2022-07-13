@@ -33,6 +33,7 @@ faz.shape <- st_read(file.path(arc.root, faz.link)) %>%
   mutate(name_id = faz10)
 
 source('modules/functions.R')
+source('modules/functions-leaflet.R')
 source('modules/run-choice.R')
 source('modules/run-comparison.R')
 source('modules/plot-map-table.R')

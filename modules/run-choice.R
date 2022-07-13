@@ -10,7 +10,7 @@ run_choice_ui <- function(id, si_label, btn_label, multi) {
                 width = '100%'),
     shinyDirButton(id = ns("directory"), 
                    label = btn_label,
-                   icon = icon("fa-solid fa-folder"),
+                   icon = icon("folder"),
                    title = "Please select a folder"
     ),
     actionButton(ns('clear'),
