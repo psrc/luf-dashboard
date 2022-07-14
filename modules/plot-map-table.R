@@ -123,7 +123,7 @@ plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, allda
     })
     
     shape <- reactive({
-      # shapefile for visualization
+      # join shapefile to table for visualization
 
       joinShp2Tbl(geog, table())
     })
