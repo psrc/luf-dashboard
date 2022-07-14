@@ -1,4 +1,3 @@
-# Define server logic required
 server <- function(input, output, session) {
 
   run_choice_server('runChoice_one', root_dir = rund)
@@ -15,18 +14,29 @@ server <- function(input, output, session) {
   
   # Run Comparison ----
   
-  # return Run Comparison sidebar controls & Run Comparison output table
-
-  run_comp_table <- multi_plot_map_data_server('runComp', reactive(input$`runChoice_multi-go`), alldt(), strdt(), paths())
+  
+  observeEvent(input$`runChoice_multi-go`, {
+    # return Run Comparison sidebar controls
+    
+    multi_plot_map_data_server('runComp', paths())
+  })
+  
 
   observeEvent(input$`runComp-go`, {
-    # browser()
+    # return Run Comparison content
+    
     plot_map_tbl_server('runCompContent', 
-                        run_comp_table$table(), 
-                        run_comp_table$dttable(),
-                        run_comp_table$baseyears(),
+                        input$`runComp-runs`,
                         input$`runComp-geography`,
-                        input$`runComp-runs`)
+                        input$`runComp-structure`,
+                        input$`runComp-indicator`,
+                        input$`runComp-year`,
+                        input$`runComp-go`,
+                        alldt(), 
+                        strdt(),
+                        paths()
+                        ) 
+    
   })
   
   # Data ----

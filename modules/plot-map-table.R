@@ -27,10 +27,92 @@ plot_map_tbl_ui <- function(id) {
   
 }
 
-plot_map_tbl_server <- function(id, data, dttable, baseyears, geog, runs) {
+plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths) {
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns
+
+    baseyears <- reactive({
+      # returns a data frame of runs and their baseyears
+
+      year <- paste0("yr", inputyear)
+
+      # for each run, find its baseyear
+      a <- alldata[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
+      b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
+
+      # return a df and subset for chosen runs
+      b <- a[, .(run)][, baseyear := b.yrs]
+      b[run %in% names(paths)]
+    })
+
+    table <- reactive({
+      # returns underlying data table for all visuals
     
+      strdt <- strdata
+      alldt <- alldata
+      byears <- baseyears()
+    
+      runnames <- get_runnames(runs)
+
+      if (is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
+          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city")) ){
+
+        # run 1
+        b1 <- byears[run == runnames[1],][['baseyear']]
+        dt1 <- alldt[run == runnames[1] & geography == geog & indicator == ind,
+                     .(name_id, geography, indicator, get(b1), get(paste0('yr',inputyear)))]
+        setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
+
+        # run 2
+        b2 <- byears[run == runnames[2],][['baseyear']]
+        dt2 <- alldt[run == runnames[2] & geography == geog & indicator == ind,
+                     .(name_id, get(b2),get(paste0('yr', inputyear)))]
+        setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
+
+        dt <- merge(dt1, dt2, by = 'name_id')
+      } else {
+
+        # run 1
+        b1 <- str_extract(byears[run == runnames[1],][['baseyear']], "\\d+")
+        dt1 <- strdt[run == runnames[1] & geography == geog & (year == b1 | year == inputyear) & indicator == ind & strtype == struc]
+        dt1.cast <- dcast.data.table(dt1, name_id + indicator + geography ~ year, value.var = "estimate")
+        setnames(dt1.cast, colnames(dt1.cast)[4:5], c('base_estrun1', 'estrun1'))
+
+        # run 2
+        b2 <- str_extract(byears[run == runnames[2],][['baseyear']], "\\d+")
+        dt2 <- strdt[run == runnames[2] & geography == geog & (year == b2 | year == inputyear)  & indicator == ind & strtype == struc]
+        dt2.cast <- dcast.data.table(dt2, name_id ~ year, value.var = "estimate")
+        setnames(dt2.cast, colnames(dt2.cast)[2:3], c('base_estrun2', 'estrun2'))
+        dt <- merge(dt1.cast, dt2.cast, by = 'name_id')
+      }
+      dt[,"diff" := (estrun1-estrun2)]
+
+      dt <- switch(geog,
+             zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
+             faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id")#,
+             # merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames("city_name", "Name")
+      )
+      return(dt)
+    })
+
+    dttable <- reactive({
+      # clean up column names of table() to render to DT
+
+      runnames <- get_runnames(runs)
+      runnames.trim <- get_trim_runnames(runnames)
+      baseyears <- baseyears()
+
+      b <- baseyears[run %in% runnames, ]
+
+      dt <- table()[, .(County, indicator, geography, name_id, Name, base_estrun1, estrun1, base_estrun2, estrun2, diff)]
+      setnames(dt, c("County", "Indicator", "Geography", "ID", "Name",
+                     paste("Base", runnames.trim[1], str_extract(b[1, ][['baseyear']], "\\d+")),
+                     paste(runnames.trim[1], inputyear),
+                     paste("Base", runnames.trim[2], str_extract(b[2, ][['baseyear']], "\\d+")),
+                     paste(runnames.trim[2], inputyear),
+                     "Difference"))
+      return(dt)
+    })
+
     runnames <- reactive(get_runnames(runs))
     
     geo <- reactive({
@@ -42,21 +124,21 @@ plot_map_tbl_server <- function(id, data, dttable, baseyears, geog, runs) {
     
     shape <- reactive({
       # shapefile for visualization
-      
-      joinShp2Tbl(geog, data)
+
+      joinShp2Tbl(geog, table())
     })
     
     output$dtTable <- renderDT({
-      datatable(dttable)
+      datatable(dttable())
     })
     
     output$plot <- renderPlotly({
-      scatterplot(data, "compare", data$estrun1, data$estrun2, runnames()[1], runnames()[2])
+      t <- table()
+      scatterplot(t, "compare", t$estrun1, t$estrun2, runnames()[1], runnames()[2])
     })
     
     
     output$map <- renderLeaflet({
-      
       s <- shape()
 
       colorBinResult <- map.colorBins(s$diff)
@@ -66,11 +148,11 @@ plot_map_tbl_server <- function(id, data, dttable, baseyears, geog, runs) {
                       pretty = FALSE)
 
       # popup setup
-      geo.popup1 <- map.popup(shape(), baseyears, 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
+      geo.popup1 <- map.popup(s, baseyears(), 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
       # geo.popup3 <- paste0("<strong>Center: </strong>", centers$name_id)
       # 
       # Draw the map without selected geographies
-      map <- map.layers(shape(), geo(), paste0("Run difference by ", geo()), geo.popup1, "", pal)
+      map <- map.layers(s, geo(), paste0("Run difference by ", geo()), geo.popup1, "", pal)
     })
   })
   
