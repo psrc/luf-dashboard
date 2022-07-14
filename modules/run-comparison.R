@@ -1,6 +1,6 @@
 # This module returns the selection widgets on the Run Comparison tab
 
-multi_plot_map_data_ui <- function(id) {
+runcomp_widgets_ui <- function(id) {
   ns <- NS(id)
  
   tagList(
@@ -9,7 +9,7 @@ multi_plot_map_data_ui <- function(id) {
   
 }
 
-multi_plot_map_data_server <- function(id, paths) {
+runcomp_widgets_server <- function(id, paths) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     

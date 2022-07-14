@@ -14,7 +14,7 @@ fluidPage(
                       sidebarPanel(width = 3,
                                    run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
                                    conditionalPanel(condition = "input.multiTab == 'runcomparison'",
-                                                    wellPanel(multi_plot_map_data_ui('runComp')))
+                                                    wellPanel(runcomp_widgets_ui('runComp')))
                                    
                                    ),
                       mainPanel(
@@ -22,7 +22,7 @@ fluidPage(
                                   type = 'tabs',
                                   tabPanel('Run Comparison',
                                            value = 'runcomparison',
-                                           plot_map_tbl_ui('runCompContent')
+                                           runcomp_plot_map_tbl_ui('runCompContent')
                                   ), # end tabPanel
                                   
                                   tabPanel('Something Else',

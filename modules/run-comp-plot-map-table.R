@@ -1,7 +1,7 @@
 # Generate linked scatterplot and leaflet map with underlying table within a tabsetPanel (as seen in Run Comparison
 # and Growth tabs).
 
-plot_map_tbl_ui <- function(id) {
+runcomp_plot_map_tbl_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -27,7 +27,7 @@ plot_map_tbl_ui <- function(id) {
   
 }
 
-plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths) {
+runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths) {
   moduleServer(id, function(input, output, session) {
 
     baseyears <- reactive({

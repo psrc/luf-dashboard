@@ -4,7 +4,7 @@ server <- function(input, output, session) {
   run_choice_server('runChoice_multi', root_dir = rund)
   
   paths <- eventReactive(input$`runChoice_multi-go`, {
-    # return absolute paths and names
+    # return absolute paths and names for multi-runs(currently)
     
     runs <- input$`runChoice_multi-allRuns`
     runnames <- get_runnames(runs)
@@ -18,25 +18,24 @@ server <- function(input, output, session) {
   observeEvent(input$`runChoice_multi-go`, {
     # return Run Comparison sidebar controls
     
-    multi_plot_map_data_server('runComp', paths())
+    runcomp_widgets_server('runComp', paths())
   })
   
 
   observeEvent(input$`runComp-go`, {
     # return Run Comparison content
     
-    plot_map_tbl_server('runCompContent', 
-                        input$`runComp-runs`,
-                        input$`runComp-geography`,
-                        input$`runComp-structure`,
-                        input$`runComp-indicator`,
-                        input$`runComp-year`,
-                        input$`runComp-go`,
-                        alldt(), 
-                        strdt(),
-                        paths()
-                        ) 
-    
+    runcomp_plot_map_tbl_server('runCompContent', 
+                                input$`runComp-runs`,
+                                input$`runComp-geography`,
+                                input$`runComp-structure`,
+                                input$`runComp-indicator`,
+                                input$`runComp-year`,
+                                input$`runComp-go`,
+                                alldt(), 
+                                strdt(),
+                                paths()
+    ) 
   })
   
   # Data ----
