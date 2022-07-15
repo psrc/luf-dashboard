@@ -112,34 +112,36 @@ map.layers <- function(shapefile, layerctrl, legendtitle, popupgeo, popupctr, ma
   return(map)
 }
 
-# # Selects IDs of scatterplot points and finds match in respective shapefile. Requires string source name
-# # that matches its respective scatterplot source name. Requires reactive shapefile.
-# select.items <- function(sourcename, shapefile){
-#   eventdata <- event_data(event = "plotly_selected", source = sourcename)
-#   if(is.null(eventdata)) return(NULL) # do nothing
-#   else {
-#     geoid <- eventdata[['key']]
-#     return(shapefile[shapefile$name_id %in% geoid, ])
-#   }
-# }
-# 
-# # Creates new map layer of selected geographies. Requires 2 arguments: reactive drag event (c or g selected_geo()) and
-# # reactive Leaflet layer control
-# addSelectedGeo <- function(map, dragevent, layerctrl){
-#   addPolygons(map,
-#               data = dragevent,
-#               fill = FALSE,
-#               color = '#FFFF00',
-#               opacity = 1,
-#               group = paste0("Selected ", layerctrl))
-# }
-# 
-# # Creates new map view and layer control settings when there are selected geographies.
-# # Requires only 1 argument: reactive Leaflet layer control
-# map.settings <-function(map, layerctrl){
-#   map <- setView(map, lng = -122.008546, lat = 47.549390, zoom = 9)%>%
-#     addLayersControl(baseGroups = c("Street Map", "Imagery"),
-#                      overlayGroups = c("Centers",layerctrl, paste0("Selected ", layerctrl)),
-#                      options = layersControlOptions(collapsed = FALSE))
-#   return(map)
-# }
+select.items <- function(sourcename, shapefile){
+  # Selects IDs of scatterplot points and finds match in respective shapefile. Requires string source name
+  # that matches its respective scatterplot source name. Requires reactive shapefile.
+  
+  eventdata <- event_data(event = "plotly_selected", source = sourcename)
+  if(is.null(eventdata)) return(NULL) # do nothing
+  else {
+    geoid <- eventdata[['key']]
+    return(shapefile[shapefile$name_id %in% geoid, ])
+  }
+}
+
+# Creates new map layer of selected geographies. Requires 2 arguments: reactive drag event (c or g selected_geo()) and
+# reactive Leaflet layer control
+addSelectedGeo <- function(map, dragevent, layerctrl){
+  addPolygons(map,
+              data = dragevent,
+              fill = FALSE,
+              color = '#FFFF00',
+              opacity = 1,
+              group = paste0("Selected ", layerctrl))
+}
+
+# Creates new map view and layer control settings when there are selected geographies.
+# Requires only 1 argument: reactive Leaflet layer control
+map.settings <-function(map, layerctrl){
+  map <- setView(map, lng = -122.008546, lat = 47.549390, zoom = 9)%>%
+    addLayersControl(baseGroups = c("Street Map", "Imagery"),
+                     # overlayGroups = c("Centers",layerctrl, paste0("Selected ", layerctrl)),
+                     overlayGroups = c(layerctrl, paste0("Selected ", layerctrl)),
+                     options = layersControlOptions(collapsed = FALSE))
+  return(map)
+}

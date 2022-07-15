@@ -5,6 +5,7 @@ runcomp_plot_map_tbl_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
+    br(),
     tabsetPanel(id = ns('tabset'),
                 type = 'pills',
                 tabPanel('Visual',
@@ -19,7 +20,8 @@ runcomp_plot_map_tbl_ui <- function(id) {
                            )
                          )
                          ),
-                tabPanel('Table', 
+                tabPanel('Table',
+                         br(),
                          DTOutput(ns('dtTable'))
                 )
     )
@@ -129,12 +131,38 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
     })
     
     output$dtTable <- renderDT({
-      datatable(dttable())
+      display.datatable <- function(table) {
+        datatable(table,
+                  extensions = 'Buttons', 
+                  options = list(
+                    dom = 'l<"sep">Bfrtip',
+                    buttons = c('csv', 'excel', 'copy'),
+                    pageLength = 10,
+                    lengthMenu = c(10, 15, 20, nrow(table))
+                  )
+        )
+      }
+      
+      eventdata <- event_data(event = "plotly_selected", source = 'runcomp')
+      
+      if(is.null(eventdata)) { 
+        # if none are selected, return all records
+        
+        d <- display.datatable(dttable())
+      } else { 
+        # else display subset
+        
+        key <- eventdata[['key']]
+        subdata <- dttable()[dttable()$ID %in% key, ]
+        d <- display.datatable(subdata)
+      }
+      
+      return(d)
     })
     
     output$plot <- renderPlotly({
       t <- table()
-      scatterplot(t, "compare", t$estrun1, t$estrun2, runnames()[1], runnames()[2])
+      scatterplot(t, "runcomp", t$estrun1, t$estrun2, runnames()[1], runnames()[2])
     })
     
     
@@ -153,6 +181,15 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       # 
       # Draw the map without selected geographies
       map <- map.layers(s, geo(), paste0("Run difference by ", geo()), geo.popup1, "", pal)
+    
+      # Re-draw the map with selected geographies
+      # Drag event for the scatterplot: will grab ids of selected points
+      subdata <- select.items("runcomp", s)
+      if(length(subdata) > 0) {
+        # browser()
+        map <- map %>% addSelectedGeo(subdata, geo()) %>% map.settings(geo())}
+      
+      return(map)
     })
   })
   

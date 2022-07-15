@@ -1,4 +1,7 @@
 fluidPage(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   theme = shinytheme("flatly"),
   navbarPage("Land Use Forecast Dashboard",
              tabPanel("One-Run",
