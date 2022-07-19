@@ -186,7 +186,6 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       # Drag event for the scatterplot: will grab ids of selected points
       subdata <- select.items("runcomp", s)
       if(length(subdata) > 0) {
-        # browser()
         map <- map %>% addSelectedGeo(subdata, geo()) %>% map.settings(geo())}
       
       return(map)

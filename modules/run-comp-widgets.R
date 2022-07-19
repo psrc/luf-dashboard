@@ -45,9 +45,13 @@ runcomp_widgets_server <- function(id, paths) {
                     label = 'Year',
                     choices = years,
                     selected = max(years)),
-        helpText("Use the 'Box Select' or 'Lasso Select' option in the scatterplot to select points and view its location on the map."),
         actionButton(ns('go'),
-                     label = 'Enter')
+                     label = 'Enter'),
+        div(style = "margin-top: 3rem;",
+          helpText("Use the 'Box Select' or 'Lasso Select' option in the scatterplot to select points, view its location on the map, 
+                 and filter records in the table. Double-click on plot to de-select.")
+        )
+       
       )
 
     }) # end renderUI
