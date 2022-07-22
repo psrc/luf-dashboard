@@ -40,7 +40,7 @@ server <- function(input, output, session) {
   
   # Data ----
   
-  strdt <- eventReactive(input$`runComp-go`, { ########may need to change the trigger to input$`runChoice-multi`
+  strdt <- eventReactive(input$`runChoice_multi-go`, {
     # build structure type (sf/mf) indicators source table
     
     runs <- paths()
@@ -79,7 +79,7 @@ server <- function(input, output, session) {
   })
   
   
-  alldt <- eventReactive(input$`runComp-go`,{ ########may need to change the trigger to input$`runChoice-multi`
+  alldt <- eventReactive(input$`runChoice_multi-go`,{
     # build general attributes source table
     
     # extract runs from abs paths
