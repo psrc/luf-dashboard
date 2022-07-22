@@ -9,41 +9,40 @@ fluidPage(
                                    run_choice_ui('runChoice_one', 'Run Choice', 'Select Run', FALSE)
                       )
              ), # end tabPanel
-
-# multi-run ---------------------------------------------------------------
-
+             
+             # multi-run ---------------------------------------------------------------
+             
              
              tabPanel("Multi-Run",
-                      sidebarPanel(width = 3,
-                                   run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
-                                   conditionalPanel(condition = "input.multiTab == 'runcomparison'",
-                                                    wellPanel(runcomp_widgets_ui('runComp')))
-                                   
-                                   ),
-                      mainPanel(
-                      tabsetPanel(id = 'multiTab',
-                                  type = 'tabs',
-                                  tabPanel('Run Comparison',
-                                           value = 'runcomparison',
-                                           runcomp_plot_map_tbl_ui('runCompContent')
-                                  ), # end tabPanel
-                                  
-                                  tabPanel('Something Else',
-                                           value = 'se',
-                                           mainPanel(width = 9)
-                                    
-                                  ), # end tabPanel
-                                  
-                                  tabPanel('Other',
-                                           value = 'o',
-                                           mainPanel(width = 9)
-                                           
-                                  ) # end tabPanel
-                        
+                      column(width = 3,
+                             run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
+                             conditionalPanel(condition = "input.multiTab == 'runcomparison'",
+                                              runcomp_widgets_ui('runComp'))
+                      ),
+                      column(width = 9, 
+                             tabsetPanel(id = 'multiTab',
+                                         type = 'tabs',
+                                         tabPanel('Run Comparison',
+                                                  value = 'runcomparison',
+                                                  runcomp_plot_map_tbl_ui('runCompContent')
+                                         ), # end tabPanel
+                                         
+                                         tabPanel('Something Else',
+                                                  value = 'se',
+                                                  mainPanel(width = 9)
+                                                  
+                                         ), # end tabPanel
+                                         
+                                         tabPanel('Other',
+                                                  value = 'o',
+                                                  mainPanel(width = 9)
+                                                  
+                                         ) # end tabPanel
+                             ) # end column
                       ) # end tabsetPanel
-                      )# end MainPanel
+                      
              ) # end tabPanel
-  
+             
   ) # end navbarPage
 ) # end fluidPage
 
