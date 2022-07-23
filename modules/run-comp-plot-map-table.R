@@ -29,29 +29,30 @@ runcomp_plot_map_tbl_ui <- function(id) {
   
 }
 
-runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths) {
+runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths, baseyears) {
   moduleServer(id, function(input, output, session) {
 
-    baseyears <- reactive({
-      # returns a data frame of runs and their baseyears
-
-      year <- paste0("yr", inputyear)
-
-      # for each run, find its baseyear
-      a <- alldata[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
-      b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
-
-      # return a df and subset for chosen runs
-      b <- a[, .(run)][, baseyear := b.yrs]
-      b[run %in% names(paths)]
-    })
+    # baseyears <- reactive({
+    #   # returns a data frame of runs and their baseyears
+    # 
+    #   year <- paste0("yr", inputyear)
+    # 
+    #   # for each run, find its baseyear
+    #   a <- alldata[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
+    #   b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
+    # 
+    #   # return a df and subset for chosen runs
+    #   b <- a[, .(run)][, baseyear := b.yrs]
+    #   b[run %in% names(paths)]
+    # })
 
     table <- reactive({
       # returns underlying data table for all visuals
     
       strdt <- strdata
       alldt <- alldata
-      byears <- baseyears()
+      byears <- baseyears
+      # byears <- baseyears()
     
       runnames <- get_runnames(runs)
 
@@ -101,7 +102,8 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
 
       runnames <- get_runnames(runs)
       runnames.trim <- get_trim_runnames(runnames)
-      baseyears <- baseyears()
+      baseyears <- baseyears
+      # baseyears <- baseyears()
 
       b <- baseyears[run %in% runnames, ]
 
@@ -176,7 +178,8 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
                       pretty = FALSE)
 
       # popup setup
-      geo.popup1 <- map.popup(s, baseyears(), 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
+      geo.popup1 <- map.popup(s, baseyears, 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
+      # geo.popup1 <- map.popup(s, baseyears(), 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
       # geo.popup3 <- paste0("<strong>Center: </strong>", centers$name_id)
       # 
       # Draw the map without selected geographies

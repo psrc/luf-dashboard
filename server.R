@@ -12,8 +12,17 @@ server <- function(input, output, session) {
     return(runs)
   })
   
-  # Run Comparison ----
+  # Top Sheet ----
   
+  observeEvent(input$`runChoice_multi-go`, {
+    topsheet_widgets_server('topSheet', paths())
+  })
+  
+  observeEvent(input$`topSheet-go`, {
+    dt_server('topSheetContent', baseyears())
+  })
+  
+  # Run Comparison ----
   
   observeEvent(input$`runChoice_multi-go`, {
     # return Run Comparison sidebar controls
@@ -34,11 +43,24 @@ server <- function(input, output, session) {
                                 input$`runComp-go`,
                                 alldt(), 
                                 strdt(),
-                                paths()
+                                paths(),
+                                baseyears()
     ) 
   })
   
   # Data ----
+  
+  baseyears <- reactive({
+    # returns a data frame of runs and their baseyears
+
+    # for each run, find its baseyear
+    a <- alldt()[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
+    b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
+
+    # return a df and subset for chosen runs
+    b <- a[, .(run)][, baseyear := b.yrs]
+    b[run %in% names(paths())]
+  })
   
   strdt <- eventReactive(input$`runChoice_multi-go`, {
     # build structure type (sf/mf) indicators source table
