@@ -34,6 +34,7 @@ faz.shape <- st_read(file.path(arc.root, faz.link)) %>%
 
 source('modules/functions.R')
 source('modules/functions-leaflet.R')
+source('modules/functions-top-sheet.R')
 source('modules/run-choice.R')
 source('modules/run-comp-widgets.R')
 source('modules/run-comp-plot-map-table.R')

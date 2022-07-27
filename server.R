@@ -19,7 +19,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$`topSheet-go`, {
-    dt_server('topSheetContent', baseyears())
+    dt_server('topSheetContent', tsTable(), 'Total Population', 'County', input$`topSheet-runs`, input$`topSheet-year`, baseyears())
   })
   
   # Run Comparison ----
@@ -60,6 +60,22 @@ server <- function(input, output, session) {
     # return a df and subset for chosen runs
     b <- a[, .(run)][, baseyear := b.yrs]
     b[run %in% names(paths())]
+  })
+  
+  tsTable <- eventReactive(input$`topSheet-go`, {
+    # create county level base table for Top Sheet
+    
+    runs <- get_runnames(input$`topSheet-runs`)
+    yrs.cols <- c(unique(baseyears()$baseyear), paste0("yr",  input$`topSheet-year`))
+    
+    # gather zone level data and aggregate by county
+    t <- merge(alldt()[geography == 'zone' & (run %in% runs)], zone.lookup, by.x = "name_id", by.y = "zone_id")
+    t.cnty <- t[, lapply(.SD, sum), by = list(County, indicator, run), .SDcols = yrs.cols]
+    
+    # create regional summary table and append to county data
+    t.reg <- t.cnty[, lapply(.SD, sum), by = list(indicator, run), .SDcols = yrs.cols][, County := "Sub-Total: Region"]
+    rbindlist(list(t.cnty, t.reg), use.names = TRUE)
+
   })
   
   strdt <- eventReactive(input$`runChoice_multi-go`, {
