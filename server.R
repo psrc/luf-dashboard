@@ -19,7 +19,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$`topSheet-go`, {
-    dt_server('topSheetContent', tsTable(), 'Total Population', 'County', input$`topSheet-runs`, input$`topSheet-year`, baseyears())
+    topsheet_server('topSheetContent', tsTable(), input$`topSheet-runs`, input$`topSheet-year`,  baseyears())
   })
   
   # Run Comparison ----

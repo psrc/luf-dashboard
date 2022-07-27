@@ -1,10 +1,12 @@
 create.tsTable <- function(table, idname, runs, tsyear, baseyear){ #idname aka 'County' or 'Name'
   # Prepares generic topsheet table for main indicators (households, population, employment)
   
-  runs <- get_runnames(runs)
+  runs <- get_runnames(runs) %>% get_trim_runnames()
+  
   sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
   sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
-
+  table[, run := get_trim_runnames(run)]
+  
   t1 <- dcast.data.table(table, paste(idname, "~ run"), value.var = sel.yrs.col)
   setcolorder(t1, c(idname, paste0(sel.yrs.col[1],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[2]), paste0(sel.yrs.col[1],"_",runs[2])))
   t1[, ncol(t1) := NULL]

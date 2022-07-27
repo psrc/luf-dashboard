@@ -27,7 +27,7 @@ fluidPage(
                                          type = 'tabs',
                                          tabPanel('Top Sheet',
                                                   value = 'topsheet',
-                                                  dt_ui('topSheetContent', 'My Table')
+                                                  topsheet_ui('topSheetContent')
                                                   
                                                   
                                          ), # end tabPanel
