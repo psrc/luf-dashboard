@@ -64,16 +64,16 @@ sketch.basic <- function(grpcol, year1, year2, run1, run2){
     thead(
       tr(
         th(rowspan = 3, grpcol),
-        th(bgcolor='AliceBlue', colspan = 1, year1),
-        th(colspan = 10, year2)
+        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, year1),
+        th(class = 'dt-center', colspan = 10, year2)
       ),
       tr(
-        th(style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'A'),
-        lapply(list('B'), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('C = B-A', 'D = C/A', ''), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
-        lapply(list('E'), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('F = E-A', 'G = F/A', ''), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
-        lapply(list('H = B-E', 'I = H/E'), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", x))
+        th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'A'),
+        lapply(list('B'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+        lapply(list('C = B-A', 'D = C/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+        lapply(list('F = E-A', 'G = F/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('H = B-E', 'I = H/E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
       ),
       tr(
         th(style="font-size:14px;", bgcolor='AliceBlue', run1),
@@ -98,7 +98,7 @@ create.DT.basic <- function(table, acontainer){
                                buttons = list('copy',
                                               list(extend = 'excel',
                                                    buttons = 'excel',
-                                                   filename = 'LUVQCDashboard')),
+                                                   filename = 'LUFDashboard')),
                                #autoWidth = TRUE,
                                paging = FALSE, 
                                searching = FALSE 
