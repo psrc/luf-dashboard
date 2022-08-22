@@ -12,6 +12,16 @@ server <- function(input, output, session) {
     return(runs)
   })
   
+  observeEvent(input$modal, {
+    showModal(modalDialog(
+      run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
+      title = 'Select Runs',
+      footer = NULL,
+      easyClose = TRUE
+    ))
+
+  })
+  
   # Top Sheet ----
   
   observeEvent(input$`runChoice_multi-go`, {
