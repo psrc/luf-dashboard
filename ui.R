@@ -1,13 +1,13 @@
-fluidPage(
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
-  ),
-  theme = shinytheme("flatly"),
+# fluidPage(
+  # theme = shinytheme("flatly"),
   navbarPage("Land Use Forecast Dashboard",
+             tags$head(
+               tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+             ),
+             theme = bs_theme(version = 5),
+             nav_item(actionButton('modal', label = 'Select Runs', icon = icon('folder'))),
              tabPanel("One-Run",
-                      sidebarPanel(width = 3,
-                                   run_choice_ui('runChoice_one', 'Run Choice', 'Select Run', FALSE)
-                      )
+
              ), # end tabPanel
              
              # multi-run ---------------------------------------------------------------
@@ -15,7 +15,7 @@ fluidPage(
              
              tabPanel("Multi-Run",
                       column(width = 3,
-                             run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
+                             # run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
                              conditionalPanel(condition = "input.multiTab == 'runcomparison'",
                                               runcomp_widgets_ui('runComp')),
                              conditionalPanel(condition = "input.multiTab == 'topsheet'",
@@ -50,5 +50,5 @@ fluidPage(
              ) # end tabPanel
              
   ) # end navbarPage
-) # end fluidPage
+# ) # end fluidPage
 
