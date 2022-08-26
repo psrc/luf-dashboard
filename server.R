@@ -1,6 +1,5 @@
 server <- function(input, output, session) {
 
-  # run_choice_server('runChoice_one', root_dir = rund)
   run_choice_server('runChoice_multi', root_dir = rund)
   
   paths <- eventReactive(input$`runChoice_multi-go`, {
@@ -12,14 +11,24 @@ server <- function(input, output, session) {
     return(runs)
   })
   
+  runChoiceModal <- modalDialog(
+    run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
+    title = 'Select Runs',
+    footer = modalButton('Exit', icon = icon('remove')),
+    easyClose = TRUE
+  )
+  
+  observe(
+    updateNavbarPage(session = session, 'navbar', selected = "Multi-Run")
+  )
+ 
+  # Show the model on start up ...
+  showModal(runChoiceModal)
+  
   observeEvent(input$modal, {
-    showModal(modalDialog(
-      run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
-      title = 'Select Runs',
-      footer = NULL,
-      easyClose = TRUE
-    ))
-
+    # user selects all runs of interest via modal pop-up
+    # updateSelectizeInput(session, "runChoice_multi", choices = input$`runChoice_multi-allRuns`, selected = input$`runChoice_multi-allRuns`, server = TRUE)
+    showModal(runChoiceModal)
   })
   
   # Top Sheet ----

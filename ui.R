@@ -1,4 +1,5 @@
-navbarPage("Land Use Forecast Dashboard",
+navbarPage(title = "Land Use Forecast Dashboard",
+           id = 'navbar',
            tags$head(
              tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
            ),
