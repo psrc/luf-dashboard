@@ -1,10 +1,9 @@
 server <- function(input, output, session) {
 
-  run_choice_server('runChoice_one', root_dir = rund)
   run_choice_server('runChoice_multi', root_dir = rund)
   
   paths <- eventReactive(input$`runChoice_multi-go`, {
-    # return absolute paths and names for multi-runs(currently)
+    # return absolute paths and names for all runs of interest
     
     runs <- input$`runChoice_multi-allRuns`
     runnames <- get_runnames(runs)
@@ -12,23 +11,48 @@ server <- function(input, output, session) {
     return(runs)
   })
   
-  # Top Sheet ----
+  runChoiceModal <- modalDialog(
+    run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
+    title = 'Select Runs',
+    footer = modalButton('Exit', icon = icon('remove')),
+    easyClose = TRUE
+  )
+  
+  # Show the model on start up ...
+  showModal(runChoiceModal)
+  
+  observeEvent(input$modal, {
+    # user selects all runs of interest via modal pop-up
+    # updateSelectizeInput(session, "runChoice_multi", choices = input$`runChoice_multi-allRuns`, selected = input$`runChoice_multi-allRuns`, server = TRUE)
+    showModal(runChoiceModal)
+  })
+  
+  # One-Run ----
+  
   
   observeEvent(input$`runChoice_multi-go`, {
+    # widgets
+    ct_mismatch_widgets_server('mismatch', paths())
+  })
+  
+  observeEvent(input$`mismatch-go`, {
+    ct_mismatch_server('mismatchContent', input$`mismatch-run`, paths(), alldt(), baseyears(), input$`mismatch-year`)
+  })
+  
+  # Multi-Run ----
+  
+  
+  observeEvent(input$`runChoice_multi-go`, {
+    # widgets
     topsheet_widgets_server('topSheet', paths())
+    runcomp_widgets_server('runComp', paths())
   })
   
   observeEvent(input$`topSheet-go`, {
     topsheet_server('topSheetContent', tsTable(), input$`topSheet-runs`, input$`topSheet-year`,  baseyears())
   })
   
-  # Run Comparison ----
-  
-  observeEvent(input$`runChoice_multi-go`, {
-    # return Run Comparison sidebar controls
-    
-    runcomp_widgets_server('runComp', paths())
-  })
+  ## Run Comparison ----
   
 
   observeEvent(input$`runComp-go`, {
@@ -82,7 +106,6 @@ server <- function(input, output, session) {
     # build structure type (sf/mf) indicators source table
     
     runs <- paths()
-    
     stypedt <- NULL
     for (r in 1:length(runs)){
       structure.files <- as.list(list.files(file.path(runs[r], "indicators"),

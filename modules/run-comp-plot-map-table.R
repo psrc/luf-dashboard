@@ -32,23 +32,9 @@ runcomp_plot_map_tbl_ui <- function(id) {
 runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, paths, baseyears) {
   moduleServer(id, function(input, output, session) {
 
-    # baseyears <- reactive({
-    #   # returns a data frame of runs and their baseyears
-    # 
-    #   year <- paste0("yr", inputyear)
-    # 
-    #   # for each run, find its baseyear
-    #   a <- alldata[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
-    #   b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
-    # 
-    #   # return a df and subset for chosen runs
-    #   b <- a[, .(run)][, baseyear := b.yrs]
-    #   b[run %in% names(paths)]
-    # })
-
     table <- reactive({
       # returns underlying data table for all visuals
-    
+
       strdt <- strdata
       alldt <- alldata
       byears <- baseyears
