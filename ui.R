@@ -9,6 +9,21 @@ navbarPage(title = "Land Use Forecast Dashboard",
 
            
            tabPanel("One-Run",
+                    fluidRow(
+                      column(width = 3,
+                               conditionalPanel(condition = "input.oneTab == 'ct'",
+                                                ct_mismatch_widgets_ui('mismatch'))
+                             ),
+                      column(width = 9,
+                             tabsetPanel(id = 'oneTab',
+                                         type = 'tabs',
+                                         tabPanel('CT Mismatch',
+                                                  value = 'ct',
+                                                  ct_mismatch_ui('mismatchContent')
+                                                  )
+                                         )
+                             )
+                    )
 
            ), # end tabPanel
            
@@ -18,7 +33,6 @@ navbarPage(title = "Land Use Forecast Dashboard",
            tabPanel("Multi-Run",
                     fluidRow(
                     column(width = 3,
-                           # run_choice_ui('runChoice_multi', 'Run Choices', 'Select Runs', TRUE),
                            conditionalPanel(condition = "input.multiTab == 'runcomparison'",
                                             runcomp_widgets_ui('runComp')),
                            conditionalPanel(condition = "input.multiTab == 'topsheet'",
