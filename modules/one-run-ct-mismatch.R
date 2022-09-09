@@ -13,6 +13,7 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
     ns <- session$ns
     
     output$uiTables <- renderUI({
+      if(is.null(mmdt())) return(NULL)
       tagList(
         h2("Summary"),
         DTOutput(ns("summary")), # top level summary
@@ -59,7 +60,7 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
           setnames(ind.values, c("name_id", paste0("yr", yrs[2])), c("city_id", paste(ind, yrs[2], sep='_')))
           ct.join <- merge(ct.by.jur, ind.values, by = 'city_id')
           no.match <- ct.join[ct != get(paste(ind, yrs[2], sep = "_")),]
-          this.report <- data.table(indicator = ind, total = nrow(no.match), max.percent = NA)
+          this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
         }
         
        
@@ -71,7 +72,7 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
           this.result <- cbind(data.table(indicator = rep(ind, nrow(no.match)), no.match),
                                data.table(difference = dif, percent = round(dif.percent,1)))
           result <- rbind(result, this.result)
-          this.report[,'max.percent'] <- max(abs(this.result$percent))
+          this.report[,'max_percent'] <- max(abs(this.result$percent))
         }
         
         report <- rbind(report, this.report)
@@ -83,8 +84,10 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
     })
     
     output$summary <- renderDT({
+      new.colnames <- str_to_title(str_replace_all(colnames(mmdt()$report), "_", " "))
+      
       datatable(mmdt()$report,
-                colnames = str_to_title(colnames(mmdt()$report)),
+                colnames = new.colnames,
                 rownames = FALSE,
                 options = list(dom = 't'))
     })
