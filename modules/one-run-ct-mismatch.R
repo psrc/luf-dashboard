@@ -51,7 +51,7 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
           ind.values <- ind.values[, ..cols]
           ct.join <- merge(ct.by.jur, ind.values, by='subreg_id')
           no.match <- ct.join[ct != get(cols[2]),]
-          this.report <- data.table(indicator = ind, total = nrow(no.match), max.percent = NA)
+          this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
         } else {
           ct <- read.table(file.path('data', paste0('annual_', indicator_settings[[ind]][2], '_control_totals.csv')), sep = ',', header=TRUE)
           ct.by.jur <- data.table(ct)[,list(ct = sum(get(indicator_settings[[ind]][1]))), by = c("city_id", "year")]
