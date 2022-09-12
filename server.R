@@ -32,12 +32,18 @@ server <- function(input, output, session) {
   
   observeEvent(input$`runChoice_multi-go`, {
     # widgets
-    ct_mismatch_widgets_server('mismatch', paths())
+    one_run_widgets_server('mismatch', paths())
+    one_run_widgets_server('spPlaces', paths())
   })
   
   observeEvent(input$`mismatch-go`, {
     ct_mismatch_server('mismatchContent', input$`mismatch-run`, paths(), alldt(), baseyears(), input$`mismatch-year`)
   })
+  
+  observeEvent(input$`spPlaces-go`, {
+    sp_places_server('spPlacesContent', input$`spPlaces-run`, paths(), alldt(), baseyears(), input$`spPlaces-year`)
+  })
+  
   
   # Multi-Run ----
   
