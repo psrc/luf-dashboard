@@ -11,20 +11,26 @@ navbarPage(title = "Land Use Forecast Dashboard",
            tabPanel("One-Run",
                     fluidRow(
                       column(width = 3,
-                               conditionalPanel(condition = "input.oneTab == 'ct'",
-                                                ct_mismatch_widgets_ui('mismatch'))
-                             ),
+                             conditionalPanel(condition = "input.oneTab == 'ct'",
+                                              one_run_widgets_ui('mismatch')),
+                             conditionalPanel(condition = "input.oneTab == 'sp'",
+                                              one_run_widgets_ui('spPlaces'))
+                      ),
                       column(width = 9,
                              tabsetPanel(id = 'oneTab',
                                          type = 'tabs',
                                          tabPanel('CT Mismatch',
                                                   value = 'ct',
                                                   ct_mismatch_ui('mismatchContent')
-                                                  )
+                                         ),
+                                         tabPanel('Special Places',
+                                                  value = 'sp',
+                                                  sp_places_ui('spPlacesContent')
                                          )
-                             )
+                             ) # end tabsetPanel
+                      )
                     )
-
+                    
            ), # end tabPanel
            
            # multi-run ---------------------------------------------------------------

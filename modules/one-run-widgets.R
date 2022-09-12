@@ -1,4 +1,4 @@
-ct_mismatch_widgets_ui <- function(id) {
+one_run_widgets_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -7,7 +7,7 @@ ct_mismatch_widgets_ui <- function(id) {
   
 }
 
-ct_mismatch_widgets_server <- function(id, paths) {
+one_run_widgets_server <- function(id, paths) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
