@@ -1,4 +1,4 @@
-# This module returns a DT formatted table with table header for either Households, Population, and Jobs by Sector for the Top Sheet
+# This module returns a DT formatted table with table header for either Households, Population, and Employment for the Top Sheet
 
 dt_ui <- function(id) {
   ns <- NS(id)

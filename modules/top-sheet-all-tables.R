@@ -6,12 +6,13 @@ topsheet_ui <- function(id) {
   tagList(
     dt_ui(ns('topSheetTp')),
     dt_ui(ns('topSheetHh')),
-    dt_ui(ns('topSheetEmp'))
+    dt_ui(ns('topSheetEmp')),
+    dt_jobs_sector_ui(ns('topSheetJobSect'))
   )
   
 }
 
-topsheet_server <- function(id, dttable, runs, tsyear, baseyear) {
+topsheet_server <- function(id, dttable, runs, tsyear, baseyear, paths) {
   moduleServer(id, function(input, output, session) {
     dt_server('topSheetTp',
               dttable,
@@ -39,6 +40,13 @@ topsheet_server <- function(id, dttable, runs, tsyear, baseyear) {
               tsyear,
               baseyear,
               'Employment')
+    
+    dt_jobs_sector_server('topSheetJobSect', 
+                          paths, 
+                          runs, 
+                          tsyear,  
+                          baseyear, 
+                          'Jobs by Sector')
     
     
   })

@@ -115,3 +115,17 @@ create.DT.basic <- function(table, acontainer){
     formatStyle(colnames(table)[8:10],
                 backgroundColor = 'LightGoldenRodYellow')
 }
+
+# Prepares generic series of calculation on Modellers topsheet
+calc.cols.tsTable <- function(table, select.years){
+  table[, Change := (table[[ncol(table)-1]]-table[[ncol(table)]])
+  ][, Per.Change := round((Change/table[[4]])*100, 2)
+    # ][, Per.Growth := round(Change/(table[[4]]-table[[2]])*100, 2)
+  ][, r1.baseyr := (table[[3]]-table[[2]])
+  ][, r1.baseyr.per := round((r1.baseyr/table[[2]])*100, 2)
+  ][, r1.avgann := round(((table[[3]]/table[[2]])^(1/(as.numeric(select.years[2])-as.numeric(select.years[1])))-1)*100, 2)
+  ][, r2.baseyr := (table[[4]]-table[[2]])
+  ][, r2.baseyr.per := round((r2.baseyr/table[[2]])*100, 2)
+  ][, r2.avgann := round(((table[[4]]/table[[2]])^(1/(as.numeric(select.years[2])-as.numeric(select.years[1])))-1)*100, 2)]
+  return(table)
+}
