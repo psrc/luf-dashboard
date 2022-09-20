@@ -50,7 +50,8 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                        type = 'tabs',
                                        tabPanel('Top Sheet',
                                                 value = 'topsheet',
-                                                topsheet_ui('topSheetContent')
+                                                topsheet_ui('topSheetContent')#,
+                                                # dt_centers_ui('test')
                                                 
                                                 
                                        ), # end tabPanel

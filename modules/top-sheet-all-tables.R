@@ -7,7 +7,8 @@ topsheet_ui <- function(id) {
     dt_ui(ns('topSheetTp')),
     dt_ui(ns('topSheetHh')),
     dt_ui(ns('topSheetEmp')),
-    dt_jobs_sector_ui(ns('topSheetJobSect'))
+    dt_jobs_sector_ui(ns('topSheetJobSect')),
+    dt_centers_ui(ns('topSheetCtr'))
   )
   
 }
@@ -47,6 +48,12 @@ topsheet_server <- function(id, dttable, runs, tsyear, baseyear, paths) {
                           tsyear,  
                           baseyear, 
                           'Jobs by Sector')
+    
+    dt_centers_server('topSheetCtr', 
+                      paths, 
+                      runs, 
+                      tsyear,  
+                      baseyear)
     
     
   })
