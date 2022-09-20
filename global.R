@@ -21,6 +21,7 @@ luv.years <- c(2014, 2015, 2020, 2025, 2030, 2035, 2040)
 faz.lookup <- fread(file.path('data', "faz_names.txt"))
 zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
+rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
 # city.lookup <- read.table(file.path(dsn, "cities.csv"), header =TRUE, sep = ",")
 
 # spatial features
@@ -36,12 +37,17 @@ faz.shape <- st_read(file.path(arc.root, faz.link)) %>%
 source('modules/functions.R')
 source('modules/functions-leaflet.R')
 source('modules/functions-top-sheet.R')
+
 source('modules/run-choice.R')
 source('modules/run-comp-widgets.R')
 source('modules/run-comp-plot-map-table.R')
+
 source('modules/top-sheet-widgets.R')
 source('modules/top-sheet-table.R')
+source('modules/top-sheet-rgc-mic.R')
+source('modules/top-sheet-jobs-sector.R')
 source('modules/top-sheet-all-tables.R')
+
 source('modules/one-run-ct-mismatch.R')
 source('modules/one-run-widgets.R')
 source('modules/one-run-special-places-table.R')
