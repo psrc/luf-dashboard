@@ -8,12 +8,13 @@ topsheet_ui <- function(id) {
     dt_ui(ns('topSheetHh')),
     dt_ui(ns('topSheetEmp')),
     dt_jobs_sector_ui(ns('topSheetJobSect')),
-    dt_centers_ui(ns('topSheetCtr'))
+    dt_centers_ui(ns('topSheetCtr')),
+    dt_key_loc_ui(ns('topSheetKeyLoc'))
   )
   
 }
 
-topsheet_server <- function(id, dttable, runs, tsyear, baseyear, paths) {
+topsheet_server <- function(id, dttable, alldata, runs, tsyear, baseyear, paths) {
   moduleServer(id, function(input, output, session) {
     dt_server('topSheetTp',
               dttable,
@@ -54,6 +55,13 @@ topsheet_server <- function(id, dttable, runs, tsyear, baseyear, paths) {
                       runs, 
                       tsyear,  
                       baseyear)
+    
+    dt_key_loc_server('topSheetKeyLoc', 
+                      paths, 
+                      runs, 
+                      tsyear, 
+                      baseyear, 
+                      alldata)
     
     
   })
