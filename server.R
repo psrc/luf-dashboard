@@ -55,8 +55,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$`topSheet-go`, {
-    topsheet_server('topSheetContent', tsTable(), input$`topSheet-runs`, input$`topSheet-year`,  baseyears(), paths())
-    # dt_centers_server('test', paths(), input$`topSheet-runs`, input$`topSheet-year`,  baseyears())
+    topsheet_server('topSheetContent', tsTable(), alldt(), input$`topSheet-runs`, input$`topSheet-year`,  baseyears(), paths())
   })
   
   ## Run Comparison ----

@@ -46,6 +46,7 @@ source('modules/top-sheet-widgets.R')
 source('modules/top-sheet-table.R')
 source('modules/top-sheet-rgc-mic.R')
 source('modules/top-sheet-jobs-sector.R')
+source('modules/top-sheet-key-loc.R')
 source('modules/top-sheet-all-tables.R')
 
 source('modules/one-run-ct-mismatch.R')
