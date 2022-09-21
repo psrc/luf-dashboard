@@ -4,18 +4,43 @@ topsheet_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
-    dt_ui(ns('topSheetTp')),
-    dt_ui(ns('topSheetHh')),
-    dt_ui(ns('topSheetEmp')),
-    dt_jobs_sector_ui(ns('topSheetJobSect')),
-    dt_centers_ui(ns('topSheetCtr')),
-    dt_key_loc_ui(ns('topSheetKeyLoc'))
+    uiOutput(ns('uiTables'))
   )
-  
 }
 
 topsheet_server <- function(id, dttable, alldata, runs, tsyear, baseyear, paths) {
   moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    
+    output$uiTables <- renderUI({
+      if(is.null(alldata)) return(NULL)
+      tagList(
+        br(),
+        tabsetPanel(id = ns('tabsetTopSheet'),
+                    type = 'pills',
+                    tabPanel('Total Population',
+                             dt_ui(ns('topSheetTp'))
+                    ),
+                    tabPanel('Households',
+                             dt_ui(ns('topSheetHh'))
+                    ),
+                    tabPanel('Employment',
+                             dt_ui(ns('topSheetEmp'))
+                    ),
+                    tabPanel('Jobs by Sector',
+                             dt_jobs_sector_ui(ns('topSheetJobSect'))
+                    ),
+                    tabPanel('Centers',
+                             dt_centers_ui(ns('topSheetCtr'))
+                    ),
+                    tabPanel('Key Locations',
+                             dt_key_loc_ui(ns('topSheetKeyLoc'))
+                    )
+                    
+        ) # end tabsetPanel
+      ) # end tagList
+    })
+    
     dt_server('topSheetTp',
               dttable,
               'Total Population',
