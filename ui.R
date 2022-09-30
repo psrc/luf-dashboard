@@ -14,7 +14,9 @@ navbarPage(title = "Land Use Forecast Dashboard",
                              conditionalPanel(condition = "input.oneTab == 'ct'",
                                               one_run_widgets_ui('mismatch')),
                              conditionalPanel(condition = "input.oneTab == 'sp'",
-                                              one_run_widgets_ui('spPlaces'))
+                                              one_run_widgets_ui('spPlaces')),
+                             conditionalPanel(condition = "input.oneTab == 'dec'",
+                                              dec_widgets_ui('dec'))
                       ),
                       column(width = 9,
                              tabsetPanel(id = 'oneTab',
@@ -26,7 +28,10 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                          tabPanel('Special Places',
                                                   value = 'sp',
                                                   sp_places_ui('spPlacesContent')
-                                         )
+                                         ),
+                                         tabPanel('Decreases',
+                                                  value = 'dec',
+                                                  dec_ui('decContent'))
                              ) # end tabsetPanel
                       )
                     )

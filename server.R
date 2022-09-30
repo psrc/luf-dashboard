@@ -34,6 +34,7 @@ server <- function(input, output, session) {
     # widgets
     one_run_widgets_server('mismatch', paths())
     one_run_widgets_server('spPlaces', paths())
+    dec_widgets_server('dec', paths())
   })
   
   observeEvent(input$`mismatch-go`, {
@@ -44,7 +45,10 @@ server <- function(input, output, session) {
     sp_places_server('spPlacesContent', input$`spPlaces-run`, paths(), alldt(), baseyears(), input$`spPlaces-year`)
   })
   
-  
+  observeEvent(input$`dec-go`, {
+    dec_server('decContent', input$`dec-run`, paths(), alldt(), baseyears(), input$`dec-year`, input$`dec-abs`, input$`dec-per`)
+  })
+
   # Multi-Run ----
   
   
