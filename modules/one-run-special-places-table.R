@@ -34,7 +34,7 @@ sp_places_table_server <- function(id, title, aindicator, runs, paths, alldata, 
                                 ][, `:=`(change = get(eval(sel.yrs.col[2])) - get(eval(sel.yrs.col[1])))
                                   ][, `:=`(percent = round((change/get(eval(sel.yrs.col[1])))*100, 1) )
                                     ][, name := as.character(name)]
-      # place.data$name <- as.character(place.data$name)
+      
       colnames(place.data)[2:ncol(place.data)] <- str_to_title(c('special place', yrs[1], yrs[2], paste("change", yrs[1], "-", yrs[2]), "percent change"))
       return(place.data)
     })
