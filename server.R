@@ -1,4 +1,16 @@
 server <- function(input, output, session) {
+  
+  # Bookmarking State ----
+  
+  # exclude the buttons from themselves being bookmarked
+  setBookmarkExclude(c("bookmark"))
+  
+  # trigger bookmarking with either button
+  observeEvent(input$bookmark, {
+    session$doBookmark()
+  })
+  
+  # Run Choice ----
 
   run_choice_server('runChoice_multi', root_dir = rund)
   

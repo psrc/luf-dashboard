@@ -12,6 +12,8 @@ library(tidyverse)
 # rund <- 'L:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
 rund <- "/media/aws-prod-file01modeldata/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
+enableBookmarking(store = "server")
+
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
 years <- seq(2014, 2050)

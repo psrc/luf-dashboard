@@ -76,6 +76,7 @@ navbarPage(title = "Land Use Forecast Dashboard",
            tabPanel('Time Series'),
            
            nav_spacer(),
+           nav_item(bookmarkButton(label = "", id = "bookmark"), style = 'margin-right: .5rem'),
            nav_item(actionButton('modal', label = 'Select Runs', icon = icon('folder')))
            
 ) # end navbarPage
