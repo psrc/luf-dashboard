@@ -11,12 +11,14 @@ server <- function(input, output, session) {
   })
   
   onBookmark(function(state) {
-    state$values$runchoice <- input$`runChoice_multi-go`
+    state$values$runchoice <- input$`runChoice_multi-allRuns`
   })
   
   onRestore(function(state) {
-    input$`runChoice_multi-go` <- state$values$runchoice 
+    input$`runChoice_multi-allRuns` <- state$values$runchoice 
   })
+  
+  #### create reactivevalues to store input$`runChoice_multi-go`
   
   
   # Run Choice ----
