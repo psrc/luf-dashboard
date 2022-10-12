@@ -10,6 +10,15 @@ server <- function(input, output, session) {
     session$doBookmark()
   })
   
+  onBookmark(function(state) {
+    state$values$runchoice <- input$`runChoice_multi-go`
+  })
+  
+  onRestore(function(state) {
+    input$`runChoice_multi-go` <- state$values$runchoice 
+  })
+  
+  
   # Run Choice ----
 
   run_choice_server('runChoice_multi', root_dir = rund)
