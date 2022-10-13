@@ -53,6 +53,14 @@ run_choice_server <- function(id, root_dir) {
                         selected = '',
                         choices = '')
     })
+    
+    onBookmark(function(state) {
+      state$values$allruns <- r$runs
+    })
+    onRestore(function(state) {
+      r$runs <- state$values$allruns
+    })
+    
   })
 }
 

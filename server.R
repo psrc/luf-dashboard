@@ -10,16 +10,21 @@ server <- function(input, output, session) {
     session$doBookmark()
   })
   
-  onBookmark(function(state) {
-    state$values$runchoice <- input$`runChoice_multi-allRuns`
-  })
-  
-  onRestore(function(state) {
-    input$`runChoice_multi-allRuns` <- state$values$runchoice 
-  })
+  # onBookmark(function(state) {
+  #   state$values$allruns <- vals$allruns
+  # })
+  # 
+  # onRestore(function(state) {
+  #   input$`runChoice_multi-allRuns` <- state$values$allruns 
+  # })
   
   #### create reactivevalues to store input$`runChoice_multi-go`
-  
+  # Error calling onRestore callback: Can't modify read-only reactive value 'runChoice_multi-allRuns'
+  # vals <- reactiveValues(allruns = NULL)
+  # 
+  # observeEvent(input$`runChoice_multi-go`, {
+  #   vals$allruns <-  input$`runChoice_multi-allRuns`
+  # })
   
   # Run Choice ----
 
