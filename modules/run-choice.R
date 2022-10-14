@@ -21,14 +21,15 @@ run_choice_ui <- function(id, si_label, btn_label, multi) {
  
 }
 
-run_choice_server <- function(id, root_dir) {
+run_choice_server <- function(id, root_dir) {#, runs = NULL
   moduleServer(id, function(input, output, session) {
     
     volumes <- c(Home = root_dir, "R Installation" = R.home(), getVolumes()())
     shinyDirChoose(input, 'directory', roots = volumes, session = session, restrictions = system.file(package = "base"), allowDirCreate = FALSE)
     
+
     r <- reactiveValues(runs = c()) # store selected runs
-    
+
     observeEvent(input$directory, {
       if(!is.integer(input$directory)) { # if a file is selected, add path to list
         dir.path <- parseDirPath(volumes, input$directory)
@@ -36,7 +37,7 @@ run_choice_server <- function(id, root_dir) {
         names(dir.path) <- run.name
         r$runs <- c(r$runs, dir.path)
       }
-      
+
       if(length(r$runs > 0)) {
         # if run(s) have been selected, populate widget with the runs
         updateSelectInput(session,
@@ -55,12 +56,20 @@ run_choice_server <- function(id, root_dir) {
     })
     
     onBookmark(function(state) {
-      state$values$allruns <- r$runs
-    })
-    onRestore(function(state) {
-      r$runs <- state$values$allruns
+      state$values$allruns <- input$allRuns
     })
     
+    onRestore(function(state) {
+      runs <- state$values$allruns
+      run.name <- unlist(map(runs, ~basename(.x)))
+      names(runs) <- run.name
+      
+      updateSelectInput(session,
+                        'allRuns',
+                        selected = runs,
+                        choices = runs)
+    })
+ 
   })
 }
 
