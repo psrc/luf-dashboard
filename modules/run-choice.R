@@ -23,11 +23,11 @@ run_choice_ui <- function(id, si_label, btn_label, multi) {
 
 run_choice_server <- function(id, root_dir) {#, runs = NULL
   moduleServer(id, function(input, output, session) {
+    ns <-  session$ns
     
     volumes <- c(Home = root_dir, "R Installation" = R.home(), getVolumes()())
     shinyDirChoose(input, 'directory', roots = volumes, session = session, restrictions = system.file(package = "base"), allowDirCreate = FALSE)
     
-
     r <- reactiveValues(runs = c()) # store selected runs
 
     observeEvent(input$directory, {
@@ -60,14 +60,18 @@ run_choice_server <- function(id, root_dir) {#, runs = NULL
     })
     
     onRestore(function(state) {
-      runs <- state$values$allruns
-      run.name <- unlist(map(runs, ~basename(.x)))
-      names(runs) <- run.name
-      
-      updateSelectInput(session,
-                        'allRuns',
-                        selected = runs,
-                        choices = runs)
+      r$runs <- state$values$allruns
+    })
+    
+    onRestored(function(state) {
+      run.name <- unlist(map(r$runs, ~basename(.x)))
+      names(r$runs) <- run.name
+
+      updateSelectInput(session = session,
+                        inputId = 'allRuns',
+                        choices = r$runs,
+                        selected = r$runs
+                        )
     })
  
   })
