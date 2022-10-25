@@ -94,7 +94,8 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
     
     output$records <- renderDT({
       new.colnames <- str_to_title(str_replace_all(colnames(mmdt()$result), "_", " "))
-      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Subreg Id', 'Ct')), c('Subreg ID', 'Control Total'))
+      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Subreg Id')), c('Subreg ID'))
+      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Ct')), c('Control Total'))
 
       datatable(mmdt()$result,
                 colnames = new.colnames,
