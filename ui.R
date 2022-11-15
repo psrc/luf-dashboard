@@ -16,7 +16,9 @@ navbarPage(title = "Land Use Forecast Dashboard",
                              conditionalPanel(condition = "input.oneTab == 'sp'",
                                               one_run_widgets_ui('spPlaces')),
                              conditionalPanel(condition = "input.oneTab == 'dec'",
-                                              dec_widgets_ui('dec'))
+                                              dec_widgets_ui('dec')),
+                             conditionalPanel(condition = "input.oneTab == 'gw'",
+                                              growth_widgets_ui('growth'))
                       ),
                       column(width = 9,
                              tabsetPanel(id = 'oneTab',
@@ -31,7 +33,11 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                          ),
                                          tabPanel('Decreases',
                                                   value = 'dec',
-                                                  dec_ui('decContent'))
+                                                  dec_ui('decContent')
+                                         ),
+                                         tabPanel('Growth',
+                                                  value = 'gw'
+                                                  )
                              ) # end tabsetPanel
                       )
                     )

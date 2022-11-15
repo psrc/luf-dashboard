@@ -9,8 +9,8 @@ library(DT)
 library(data.table)
 library(tidyverse)
 
-# rund <- 'L:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
-rund <- "/media/aws-prod-file01modeldata/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
+rund <- 'L:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
+# rund <- "/media/aws-prod-file01modeldata/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
@@ -34,24 +34,6 @@ zone.shape <- st_read(file.path(arc.root, zone.link)) %>%
 faz.shape <- st_read(file.path(arc.root, faz.link)) %>% 
   mutate(name_id = faz10)
 
-source('modules/functions.R')
-source('modules/functions-leaflet.R')
-source('modules/functions-top-sheet.R')
-
-source('modules/run-choice.R')
-source('modules/run-comp-widgets.R')
-source('modules/run-comp-plot-map-table.R')
-
-source('modules/top-sheet-widgets.R')
-source('modules/top-sheet-table.R')
-source('modules/top-sheet-rgc-mic.R')
-source('modules/top-sheet-jobs-sector.R')
-source('modules/top-sheet-key-loc.R')
-source('modules/top-sheet-all-tables.R')
-
-source('modules/one-run-ct-mismatch.R')
-source('modules/one-run-widgets.R')
-source('modules/one-run-special-places-table.R')
-source('modules/one-run-special-places-all-tables.R')
-source('modules/one-run-decreases-widgets.R')
-source('modules/one-run-decreases.R')
+# run all files in the modules sub-directory
+module_files <- list.files('modules', full.names = TRUE)
+sapply(module_files, source)
