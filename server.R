@@ -35,7 +35,7 @@ server <- function(input, output, session) {
     one_run_widgets_server('mismatch', paths())
     one_run_widgets_server('spPlaces', paths())
     dec_widgets_server('dec', paths())
-    growth_widgets_server('growth', paths(), baseyears())
+    growth_widgets_server('growth', paths(), baseyears(), alldt())
   })
   
   observeEvent(input$`mismatch-go`, {

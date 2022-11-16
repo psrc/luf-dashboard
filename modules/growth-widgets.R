@@ -40,7 +40,7 @@ growth_widgets_ui <- function(id) {
   
 }
 
-growth_widgets_server <- function(id, paths, baseyears) {
+growth_widgets_server <- function(id, paths, baseyears, alldata) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     

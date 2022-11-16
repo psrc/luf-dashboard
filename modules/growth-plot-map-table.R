@@ -29,7 +29,7 @@ growth_plot_map_tbl_ui <- function(id) {
 
 growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go, alldata, strdata, paths, baseyears) {
   moduleServer(id, function(input, output, session) {
-
+    
     table <- reactive({
       # returns underlying data table for all visuals
 
@@ -46,7 +46,6 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
         dt <- alldt[run == runnames & geography == geog & indicator == ind,
                     .(name_id, geography, run, indicator, yr1 = get(paste0('yr',gYear[1])), yr2 = get(paste0('yr', gYear[2])))]
       } else {
-        browser()
         dt1 <- strdt[run == runnames & geography == geog & indicator == ind & strtype == struc & (year == gYear[1] | year == gYear[2]),
                      .(name_id, geography, run, indicator, strtype, year, estimate)]
         
@@ -66,7 +65,6 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
 
     dttable <- reactive({
       # clean up column names of table() to render to DT
-      browser()
       runnames <- get_runnames(run)
       runnames.trim <- get_trim_runnames(runnames)
 
@@ -96,6 +94,8 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
     })
     
     output$dtTable <- renderDT({
+      if(is.null(table())| all(table()$yr1 == 0) | all(table()$yr2 == 0)) return(NULL)
+      
       display.datatable <- function(table) {
         datatable(table,
                   extensions = 'Buttons', 
@@ -126,12 +126,17 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
     })
     
     output$plot <- renderPlotly({
+      if(is.null(table())| all(table()$yr1 == 0) | all(table()$yr2 == 0)) return(NULL)
+      
       t <- table()
       scatterplot(t, "growth", t$yr1, t$yr2, inputyears[1], inputyears[2])
     })
     
     
     output$map <- renderLeaflet({
+      if(is.null(table()) || is.null(shape())) return(NULL)
+      if (is.null(shape()$diff) | all(shape()$yr1 == 0) | all(shape()$yr2 == 0)) return(NULL)
+      
       s <- shape()
 
       colorBinResult <- map.colorBins(s$diff)
