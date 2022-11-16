@@ -66,7 +66,7 @@ growth_widgets_server <- function(id, paths, baseyears) {
       # for selected run, find its baseyear
       
       r <- get_runnames(input$run)
-      str_extract(baseyears[run == r, baseyear], "\\d+")
+      str_extract(baseyears[run %in% r, baseyear], "\\d+")
     })
     
   }) # end server

@@ -36,7 +36,8 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                                   dec_ui('decContent')
                                          ),
                                          tabPanel('Growth',
-                                                  value = 'gw'
+                                                  value = 'gw',
+                                                  growth_plot_map_tbl_ui('growthContent')
                                                   )
                              ) # end tabsetPanel
                       )

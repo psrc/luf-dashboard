@@ -49,6 +49,21 @@ server <- function(input, output, session) {
   observeEvent(input$`dec-go`, {
     dec_server('decContent', input$`dec-run`, paths(), alldt(), baseyears(), input$`dec-year`, input$`dec-abs`, input$`dec-per`)
   })
+  
+  observeEvent(input$`growth-go`, {
+    growth_plot_map_tbl_server('growthContent',
+                               input$`growth-run`,
+                               input$`growth-geography`,
+                               input$`growth-structure`,
+                               input$`growth-indicator`,
+                               input$`growth-years`,
+                               input$`growth-go`,
+                               alldt(), 
+                               strdt(),
+                               paths(),
+                               baseyears()
+                               )
+  })
 
   # Multi-Run ----
   
