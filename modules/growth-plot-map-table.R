@@ -10,22 +10,21 @@ growth_plot_map_tbl_ui <- function(id) {
                 tabPanel('Visual',
                          fluidRow(
                            column(width = 6,
-                             plotlyOutput(ns("plot"), 
-                                          height = "725px")
+                                  plotlyOutput(ns("plot"), 
+                                               height = "725px")
                            ),
                            column(width = 6,
-                             leafletOutput(ns("map"), 
-                                           height = "725px")
+                                  leafletOutput(ns("map"), 
+                                                height = "725px")
                            )
                          )
-                         ),
+                ),
                 tabPanel('Table',
                          br(),
                          DTOutput(ns('dtTable'))
                 )
     )
   )
-  
 }
 
 growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go, alldata, strdata, paths, baseyears) {
@@ -142,10 +141,9 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
                       pretty = FALSE)
 
       # popup setup
-      # geo.popup1 <- map.popup(s, baseyears, 'yr1','yr2', geo(), inputyears[1], inputyears[2])
-      geo.popup1 <- NULL
+      geo.popup1 <- map.popup(s, baseyears, 'yr1','yr2', geo(), inputyears[1], inputyears[2], tab = 'growth')
       # geo.popup3 <- paste0("<strong>Center: </strong>", centers$name_id)
-      # 
+
       # Draw the map without selected geographies
       map <- map.layers(s, geo(), paste0("Year difference by ", geo()), geo.popup1, "", pal)
     
