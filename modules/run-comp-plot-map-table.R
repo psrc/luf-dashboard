@@ -107,7 +107,7 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
     
     geo <- reactive({
       switch(geog,
-             taz = "TAZ",
+             zone = "TAZ",
              faz = "FAZ",
              city = "City")
     })
@@ -164,10 +164,9 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
                       pretty = FALSE)
 
       # popup setup
-      geo.popup1 <- map.popup(s, baseyears, 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
-      # geo.popup1 <- map.popup(s, baseyears(), 'estrun1','estrun2', geo(), runnames()[1], runnames()[2])
+      geo.popup1 <- map.popup(s, baseyears, 'estrun1','estrun2', geo(), runnames()[1], runnames()[2], 'default')
       # geo.popup3 <- paste0("<strong>Center: </strong>", centers$name_id)
-      # 
+
       # Draw the map without selected geographies
       map <- map.layers(s, geo(), paste0("Run difference by ", geo()), geo.popup1, "", pal)
     

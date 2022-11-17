@@ -54,7 +54,7 @@ map.colorBins <- function(diffcolumn){
 }
 
 
-map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitle, ytitle, tab = NULL){
+map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitle, ytitle, tab = 'default'){
   # Writes Leaflet popup text for non-centers shapefiles. Requires reactive shapefile, string x&y axis titles.
 
   b <- baseyear.df[run %in% c(xtitle, ytitle), ]

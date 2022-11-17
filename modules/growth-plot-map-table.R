@@ -82,7 +82,7 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
     
     geo <- reactive({
       switch(geog,
-             taz = "TAZ",
+             zone = "TAZ",
              faz = "FAZ",
              city = "City")
     })
