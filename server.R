@@ -35,6 +35,7 @@ server <- function(input, output, session) {
     one_run_widgets_server('mismatch', paths())
     one_run_widgets_server('spPlaces', paths())
     dec_widgets_server('dec', paths())
+    growth_widgets_server('growth', paths(), baseyears(), alldt())
   })
   
   observeEvent(input$`mismatch-go`, {
@@ -47,6 +48,21 @@ server <- function(input, output, session) {
   
   observeEvent(input$`dec-go`, {
     dec_server('decContent', input$`dec-run`, paths(), alldt(), baseyears(), input$`dec-year`, input$`dec-abs`, input$`dec-per`)
+  })
+  
+  observeEvent(input$`growth-go`, {
+    growth_plot_map_tbl_server('growthContent',
+                               input$`growth-run`,
+                               input$`growth-geography`,
+                               input$`growth-structure`,
+                               input$`growth-indicator`,
+                               input$`growth-years`,
+                               input$`growth-go`,
+                               alldt(), 
+                               strdt(),
+                               paths(),
+                               baseyears()
+                               )
   })
 
   # Multi-Run ----

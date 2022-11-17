@@ -54,21 +54,29 @@ map.colorBins <- function(diffcolumn){
 }
 
 
-map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitle, ytitle){
+map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitle, ytitle, tab = NULL){
   # Writes Leaflet popup text for non-centers shapefiles. Requires reactive shapefile, string x&y axis titles.
 
   b <- baseyear.df[run %in% c(xtitle, ytitle), ]
   base.x <- paste(str_extract(b[run == xtitle, ][['baseyear']], '\\d+'), get_trim_runnames(b[run == xtitle, ][['run']]))
   base.y <- paste(str_extract(b[run == ytitle, ][['baseyear']], '\\d+'), get_trim_runnames(b[run == ytitle, ][['run']]))
-  paste0("<strong>ID: </strong>", shapefile$name_id,
-         "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
-         "<br><strong>", paste('Base', base.x)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun1']], 0), big.mark = ","),
-         "<br><strong>", paste('Base', base.y)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun2']], 0), big.mark = ","),
-         "<br><strong>", get_trim_runnames(xtitle)," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","),
-         "<br><strong>", get_trim_runnames(ytitle)," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
-         "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
+  
+  if(tab == 'growth') {
+    paste0("<strong>ID: </strong>", shapefile$name_id,
+           "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
+           "<br><strong>", get_trim_runnames(xtitle)," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","),
+           "<br><strong>", get_trim_runnames(ytitle)," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
+           "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
+  } else {
+    paste0("<strong>ID: </strong>", shapefile$name_id,
+           "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
+           "<br><strong>", paste('Base', base.x)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun1']], 0), big.mark = ","),
+           "<br><strong>", paste('Base', base.y)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun2']], 0), big.mark = ","),
+           "<br><strong>", get_trim_runnames(xtitle)," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","),
+           "<br><strong>", get_trim_runnames(ytitle)," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
+           "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
+  }
 }
-
 
 map.layers <- function(shapefile, layerctrl, legendtitle, popupgeo, popupctr, mappalette){
   # Creates Leaflet baselayers. Requires reactive shapefile, string legend title.
