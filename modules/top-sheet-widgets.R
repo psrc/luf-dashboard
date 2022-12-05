@@ -12,7 +12,6 @@ topsheet_widgets_server <- function(id, paths) {
     ns <- session$ns
     
     output$uiTopsheet <- renderUI({
-      div(class = 'panel',
           tagList(
             wellPanel(
               selectInput(session$ns('runs'),
@@ -26,7 +25,6 @@ topsheet_widgets_server <- function(id, paths) {
                            label = 'Enter')
             ) # end wellPanel
           ) # end tagList
-      ) # end div
     })
   })
 }

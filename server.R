@@ -98,6 +98,14 @@ server <- function(input, output, session) {
     ) 
   })
   
+  # Time Series ----
+  
+  observeEvent(input$`runChoice_multi-go`, {
+    # widgets
+    timeseries_widgets_server('ts', paths())
+  })
+  
+ 
   # Data ----
   
   baseyears <- reactive({

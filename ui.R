@@ -80,7 +80,14 @@ navbarPage(title = "Land Use Forecast Dashboard",
           # time series -------------------------------------------------------------
 
            
-           tabPanel('Time Series'),
+          tabPanel('Time Series',
+                   fluidRow(
+                     column(width = 3,
+                            timeseries_widgets_ui('ts')
+                            ),
+                     column(width = 9)
+                   ) # end fluidRow
+          ), # end tabPanel
            
            nav_spacer(),
            nav_item(actionButton('modal', label = 'Select Runs', icon = icon('folder')))
