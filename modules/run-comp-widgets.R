@@ -20,7 +20,6 @@ runcomp_widgets_server <- function(id, paths) {
       inds <- c("Total Population", "Households", "Employment", "Residential Units")
       
       tagList(
-        div(class = 'panel',
             wellPanel(
               selectInput(session$ns('runs'),
                           label = 'Compare two runs',
@@ -54,7 +53,6 @@ runcomp_widgets_server <- function(id, paths) {
                  and filter records in the table. Double-click on plot to de-select.")
               )
             ) # end wellPanel
-        ) # end div
       ) # end taglist
       
     }) # end renderUI

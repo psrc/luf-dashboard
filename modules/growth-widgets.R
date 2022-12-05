@@ -7,7 +7,6 @@ growth_widgets_ui <- function(id) {
   inds <- c("Total Population", "Households", "Employment", "Residential Units")
   
   tagList(
-    div(class = 'panel',
         wellPanel(
           uiOutput(ns('uiRun')),
           selectInput(ns('geography'),
@@ -35,7 +34,6 @@ growth_widgets_ui <- function(id) {
                  and filter records in the table. Double-click on plot to de-select.")
           )
         ) # end wellPanel
-    ) # end div
   ) # end taglist
   
 }
