@@ -4,7 +4,8 @@
       float: left;
     }
 
-.panel {
+.panel,
+.ct-card {
   margin-top: 1rem;
 }
 

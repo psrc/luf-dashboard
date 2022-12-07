@@ -15,8 +15,33 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
     output$uiTables <- renderUI({
       if(is.null(mmdt())) return(NULL)
       tagList(
-        h2("Summary"),
-        DTOutput(ns("summary")), # top level summary
+        fluidRow(
+          column(width = 6,
+            card(
+              card_header(
+                class = "bg-secondary",
+                "Mismatch Summary"
+              ),
+              card_body(
+                DTOutput(ns("summary"))
+              )
+              , class = 'ct-card') # end card
+          
+        ), # end column
+        column(width = 6,
+          card(
+            card_header(
+              class = "bg-secondary",
+              "Regional Totals"
+            ),
+            card_body(
+              DTOutput(ns("totals"))
+            )
+            , class = 'ct-card') # end card
+        ) # end column
+     
+        ),
+        
         h2("Detail"),
         DTOutput(ns("records")) # data
       )
@@ -34,7 +59,7 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
       indicator.names <- c('Households' = 'households', 'Employment' = 'employment')
       indicator_settings <- list(households = c("total_number_of_households", "household"), employment = c("total_number_of_jobs", "employment"))
 
-      result <- report <- NULL
+      result <- report <- totals <- NULL
       for (ind in indicator.names) {
         
         # Does control file exist in directory?
@@ -63,7 +88,14 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
           this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
         }
         
-       
+        # calculate ct, simulated, diff for regional total
+        this.totals <- ct.join[, lapply(.SD, sum), .SDcols = c('ct', str_subset(colnames(ct.join), paste0(".*", yrs[2])))
+                               ][, indicator := eval(ind)]
+
+        setnames(this.totals,  str_subset(colnames(ct.join), paste0(".*", yrs[2])), paste('simulated', yrs[2]))
+        this.totals <- setcolorder(this.totals, c('indicator', 'ct', paste('simulated', yrs[2])))
+        this.totals[, difference := get(eval(paste('simulated', yrs[2])))-ct]
+    
         if(nrow(no.match) > 0) {
           simcol <- paste0("simulated_", yrs[2])
           colnames(no.match)[colnames(no.match) == paste(ind, yrs[2], sep="_")] <- simcol
@@ -76,17 +108,34 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
         }
         
         report <- rbind(report, this.report)
-      
+        totals <- rbind(totals, this.totals)
+        
       }
-      
-      dlist <- list("report" = report, "result" = result)
+
+      dlist <- list("report" = report, "result" = result, "totals" = totals)
       return(dlist)
     })
     
     output$summary <- renderDT({
       new.colnames <- str_to_title(str_replace_all(colnames(mmdt()$report), "_", " "))
+      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Total')), 'Number of IDs with Differences')
+      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Max Percent')), 'Max Percent Difference')
       
       datatable(mmdt()$report,
+                colnames = new.colnames,
+                rownames = FALSE,
+                options = list(dom = 't'))
+    })
+    
+    output$totals <- renderDT({
+      # regional totals, with and without differences between simulated estimate and control total
+      d <- mmdt()$totals
+
+      new.colnames <- str_to_title(colnames(d))
+      new.colnames <- replace(new.colnames, which(new.colnames %in% c('Ct')), c('Control Total'))
+      new.colnames <- str_to_title(str_replace_all(new.colnames, "_", " "))
+      
+      datatable(d,
                 colnames = new.colnames,
                 rownames = FALSE,
                 options = list(dom = 't'))
