@@ -107,15 +107,15 @@ server <- function(input, output, session) {
   
   observeEvent(input$`ts-go`,{
     # return time series content
-    timeseries_table_server('tsContent', 
-                            runs = input$`ts-runs`,
-                            geog = input$`ts-geog`,
-                            largearea = input$`ts-largeArea`,
-                            go = input$`ts-go`, 
-                            alldata = alldt(), 
-                            ctrlhctdata = ctrlhctdt(),
-                            paths = paths()
-                            )
+    timeseries_plot_server('tsContent', 
+                           runs = input$`ts-runs`,
+                           geog = input$`ts-geog`,
+                           largearea = input$`ts-largeArea`,
+                           go = input$`ts-go`, 
+                           alldata = alldt(), 
+                           ctrlhctdata = ctrlhctdt(),
+                           paths = paths()
+    )
   })
   
  

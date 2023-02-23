@@ -1,6 +1,6 @@
 # Generate a matrix of timeseries charts.
 
-timeseries_table_ui <- function(id) {
+timeseries_plot_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -9,7 +9,7 @@ timeseries_table_ui <- function(id) {
   
 }
 
-timeseries_table_server <- function(id, runs, geog, largearea, go, alldata, ctrlhctdata, paths) {
+timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlhctdata, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- reactive({
@@ -44,6 +44,7 @@ timeseries_table_server <- function(id, runs, geog, largearea, go, alldata, ctrl
         t[, name := factor(name, levels = c('King', 'Kitsap', 'Pierce', 'Snohomish', 'Region'))]
       
       } else if(geog == 'hct') {
+      ## Control HCT ----  
         ch <- ctrlhctdata
         ch[run %in% runnames, ]
         
@@ -60,18 +61,26 @@ timeseries_table_server <- function(id, runs, geog, largearea, go, alldata, ctrl
     output$plots <- renderPlotly({
       t <- table()
       
-      if(geog == 'county' ) {
-        ggplotly_w <- 1400
-        ggplotly_h <- 925
+      num_juris <- length(unique(t$name))
+      num_indic <- length(unique(t$indicator))
+      ggplotly_w <- 1400
+      
+      if(geog == 'county') {
+        ggplotly_h <- 1200
       } else if(geog == 'hct') {
-        ggplotly_w <- 1400
-        ggplotly_h <- 1000
+        if(num_juris <= 5) {
+          ggplotly_h <- 925
+        } else if(num_juris > 5 & num_juris <= 10){
+          ggplotly_h <- 2000
+        } else {
+          ggplotly_h <- 3000
+        }
       }
       
       g <- ggplot(t, aes(x = year, y = estimate, group = run, colour = run)) +
         geom_line() +
         geom_point(size = .75) +
-        facet_wrap(~ interaction(indicator, name), scales = "free", shrink = FALSE, ncol = 4) +
+        facet_wrap(~ interaction(indicator, name), scales = "free", shrink = FALSE, ncol = num_indic) +
         lemon::coord_capped_cart(bottom='both', left='both') +
         labs(x = " ", y = " ") +
         scale_y_continuous(labels = scales::comma) +
