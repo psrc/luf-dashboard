@@ -23,14 +23,14 @@ timeseries_widgets_ui <- function(id) {
       uiOutput(ns('uiRun')),
       selectInput(ns('geog'),
                   label = 'Geography',
-                  choices = c('County & Region', 
-                              'Control HCT',  
+                  choices = c('County & Region' = 'county', 
+                              'Control HCT' = 'hct',  
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
       
       # conditional panel for cities
       conditionalPanel(
-        condition = "input.geog == 'cities' | input.geog == 'Faz' ",
+        condition = "input.geog == 'cities' | input.geog == 'Faz' | input.geog == 'hct' ",
         ns = ns,
         uiOutput(ns('uiLgAreaText')),
         selectInput(ns('largeArea'),
@@ -52,13 +52,15 @@ timeseries_widgets_server <- function(id, paths) {
     output$uiLgAreaText <- renderUI({
       geog <- switch(input$geog,
              'cities' = 'cities',
-             'Faz' = 'FAZs')
+             'Faz' = 'FAZs',
+             'hct' = 'Control HCTs'
+             )
       div(class = 'notes', paste('View', geog, 'within a FAZ Large Area'))
     })
     
     output$uiRun <- renderUI({
       selectInput(ns('runs'),
-                  label = 'Compare runs',
+                  label = 'Select run(s)',
                   choices = paths,
                   multiple = TRUE)
     })

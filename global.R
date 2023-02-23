@@ -8,9 +8,10 @@ library(leaflet)
 library(DT)
 library(data.table)
 library(tidyverse)
+library(psrcelmer)
 
-# rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
-rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
+rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
+# rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
@@ -22,6 +23,7 @@ faz.lookup <- fread(file.path('data', "faz_names.txt"))
 zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
+ctrlhct.lookup <- fread(file.path('data','control_hct.csv'))
 # city.lookup <- read.table(file.path(dsn, "cities.csv"), header =TRUE, sep = ",")
 
 # spatial features
@@ -33,6 +35,11 @@ zone.shape <- st_read(file.path(arc.root, zone.link)) %>%
   mutate(name_id = taz)
 faz.shape <- st_read(file.path(arc.root, faz.link)) %>% 
   mutate(name_id = faz10)
+
+cities.shape <- st_read_elmergeo('cities18_dashboard')
+control.shape <- st_read_elmergeo('control18_dashboard')
+subreg.shape <- st_read_elmergeo('subregs18_dashboard')
+target.shape <- st_read_elmergeo('target18_dashboard')
 
 # run all files in the modules sub-directory
 module_files <- list.files('modules', full.names = TRUE)

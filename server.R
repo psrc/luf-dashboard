@@ -105,6 +105,19 @@ server <- function(input, output, session) {
     timeseries_widgets_server('ts', paths())
   })
   
+  observeEvent(input$`ts-go`,{
+    # return time series content
+    timeseries_table_server('tsContent', 
+                            runs = input$`ts-runs`,
+                            geog = input$`ts-geog`,
+                            largearea = input$`ts-largeArea`,
+                            go = input$`ts-go`, 
+                            alldata = alldt(), 
+                            ctrlhctdata = ctrlhctdt(),
+                            paths = paths()
+                            )
+  })
+  
  
   # Data ----
   
@@ -211,6 +224,31 @@ server <- function(input, output, session) {
     df[is.na(df)] <- 0
     
     return(df)
+  })
+  
+  ctrlhctdt <- eventReactive(input$`runChoice_multi-go`,{
+    # build control HCT source table
+    
+    # extract runs from abs paths
+    runs <- paths()
+    attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
+    
+    d <- NULL
+
+    for (r in 1:length(runs)) {
+      for (i in 1:length(attribute)){
+        filename <- paste0('control__',"table",'__',attribute[i], 'An.csv')
+        
+        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+        dt <- melt(dt, id.vars = 'control_id', variable.name = 'attribute', value.name = 'estimate')
+        dt[, run := names(runs)[r]]
+        ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
+      }
+    }
+    
+    d[, `:=`(year = str_extract(attribute, "\\d+"),
+              attribute = str_extract(attribute, '\\w+(?=A)'))]
+    
   })
   
   # output$strdtavail <- reactive({

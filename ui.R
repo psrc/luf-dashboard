@@ -85,7 +85,9 @@ navbarPage(title = "Land Use Forecast Dashboard",
                      column(width = 3,
                             timeseries_widgets_ui('ts')
                             ),
-                     column(width = 9)
+                     column(width = 9,
+                            timeseries_table_ui('tsContent')
+                            )
                    ) # end fluidRow
           ), # end tabPanel
            
