@@ -24,7 +24,7 @@ zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
 ctrlhct.lookup <- fread(file.path('data','control_hct.csv'))
-# city.lookup <- read.table(file.path(dsn, "cities.csv"), header =TRUE, sep = ",")
+city.lookup <- fread(file.path('data', "cities18.csv"))
 
 # spatial features
 arc.root <- 'https://services6.arcgis.com/GWxg6t7KXELn1thE/arcgis/rest/services'

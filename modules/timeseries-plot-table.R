@@ -53,6 +53,13 @@ timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlh
         setnames(t, c('attribute', 'control_na'), c('indicator', 'name'))
         t <- t[lgarea_group == largearea]
         
+      } else if(geog == 'cities') {
+        a_city <- a[geography == 'city']
+        # browser()
+        # merge with lookup table
+        t <- merge(a_city, city.lookup, by.x = 'name_id', by.y = 'city_id')
+        setnames(t, c('city_name'), c('name'))
+        t <- t[lgarea_group == largearea]
       }
       
       return(t)
@@ -67,7 +74,7 @@ timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlh
       
       if(geog == 'county') {
         ggplotly_h <- 1200
-      } else if(geog == 'hct') {
+      } else if(geog == 'hct' | geog == 'cities') {
         if(num_juris <= 5) {
           ggplotly_h <- 925
         } else if(num_juris > 5 & num_juris <= 10){

@@ -1,0 +1,97 @@
+large_area,city_name,county_id,county,city_id,lgarea_group
+Central Kitsap,Bremerton,35,Kitsap,43,"Central, North, and South Kitsap"
+Central Kitsap,Silverdale UGA,35,Kitsap,47,"Central, North, and South Kitsap"
+Central Kitsap,Uninc Urban Kitsap,35,Kitsap,48,"Central, North, and South Kitsap"
+Eastside King,Beaux Arts,33,King,3,Eastside King (2)
+Eastside King,Bellevue,33,King,4,Eastside King (2)
+Eastside King,Bothell,33,King,6,Eastside King (1)
+Eastside King,Clyde Hill,33,King,9,Eastside King (1)
+Eastside King,Hunts Point,33,King,15,Eastside King (1)
+Eastside King,Issaquah,33,King,16,Eastside King (2)
+Eastside King,Kenmore,33,King,17,Eastside King (1)
+Eastside King,Kirkland,33,King,20,Eastside King (1)
+Eastside King,Medina,33,King,23,Eastside King (1)
+Eastside King,Mercer Island,33,King,24,Eastside King (2)
+Eastside King,Newcastle,33,King,26,Eastside King (2)
+Eastside King,Redmond,33,King,30,Eastside King (1)
+Eastside King,Sammamish,33,King,32,Eastside King (2)
+Eastside King,Woodinville,33,King,40,Eastside King (1)
+Eastside King,Yarrow Point,33,King,41,Eastside King (1)
+Everett,Arlington,61,Snohomish,75,Everett
+Everett,Everett,61,Snohomish,80,Everett
+Everett,Lake Stevens,61,Snohomish,84,Everett
+Everett,Marysville,61,Snohomish,86,Everett
+Everett,Snohomish,61,Snohomish,91,Everett
+Green River,Algona,33,King,1,Green River
+Green River,Kent,33,King,18,Green River
+Green River,Pacific,33,King,29,Green River
+Green River,Renton,33,King,31,Green River
+Green River,Tukwila,33,King,38,Green River
+King Other,Carnation,33,King,8,SE King and King Other
+King Other,Duvall,33,King,12,SE King and King Other
+King Other,Enumclaw,53,King,56,SE King and King Other
+King Other,King Rural,33,King,19,SE King and King Other
+King Other,North Bend,33,King,28,SE King and King Other
+King Other,Skykomish,33,King,36,SE King and King Other
+King Other,Snoqualmie,33,King,37,SE King and King Other
+NW Snohomish,Stanwood,61,Snohomish,93,NW Snohomish
+North Kitsap,Bainbridge Island,35,Kitsap,42,"Central, North, and South Kitsap"
+North Kitsap,Kitsap Rural,35,Kitsap,44,"Central, North, and South Kitsap"
+North Kitsap,Poulsbo,35,Kitsap,46,"Central, North, and South Kitsap"
+Peninsula,Gig Harbor,53,Pierce,59,Peninsula and Tacoma
+Pierce Other,Auburn,53,Pierce,49,Pierce Other (1)
+Pierce Other,Bonney Lake,53,Pierce,50,Pierce Other (1)
+Pierce Other,Buckley,53,Pierce,51,Pierce Other (1)
+Pierce Other,Carbonado,53,Pierce,52,Pierce Other (2)
+Pierce Other,Eatonville,53,Pierce,54,Pierce Other (2)
+Pierce Other,Edgewood,53,Pierce,55,Pierce Other (1)
+Pierce Other,Milton,53,Pierce,61,Pierce Other (1)
+Pierce Other,Orting,53,Pierce,62,Pierce Other (2)
+Pierce Other,Pacific,53,Pierce,63,Pierce Other (1)
+Pierce Other,Pierce Rural,53,Pierce,64,Pierce Other (2)
+Pierce Other,Puyallup,53,Pierce,65,Pierce Other (2)
+Pierce Other,Roy,53,Pierce,66,Pierce Other (2)
+Pierce Other,South Prairie,53,Pierce,68,Pierce Other (2)
+Pierce Other,Sumner,53,Pierce,70,Pierce Other (1)
+Pierce Other,Uninc Urban Pierce,53,Pierce,72,Pierce Other (2)
+Pierce Other,Wilkeson,53,Pierce,74,Pierce Other (2)
+SE King,Black Diamond,33,King,5,SE King and King Other
+SE King,Covington,33,King,10,SE King and King Other
+SE King,Enumclaw,33,King,13,SE King and King Other
+SE King,Maple Valley,33,King,22,SE King and King Other
+SW King,Auburn,33,King,2,SW King
+SW King,Burien,33,King,7,SW King
+SW King,Des Moines,33,King,11,SW King
+SW King,Federal Way,33,King,14,SW King
+SW King,Milton,33,King,25,SW King
+SW King,Normandy Park,33,King,27,SW King
+SW King,Sea Tac,33,King,33,SW King
+SW King,Uninc Urban King,33,King,39,SW King
+SW Pierce,DuPont,53,Pierce,53,SW Pierce
+SW Pierce,Fircrest,53,Pierce,58,SW Pierce
+SW Pierce,Lakewood,53,Pierce,60,SW Pierce
+SW Pierce,Steilacoom,53,Pierce,69,SW Pierce
+SW Pierce,University Place,53,Pierce,73,SW Pierce
+SW Snohomish,Bothell,61,Snohomish,76,SW Snohomish (2)
+SW Snohomish,Brier,61,Snohomish,77,SW Snohomish (2)
+SW Snohomish,Edmonds,61,Snohomish,79,SW Snohomish (1)
+SW Snohomish,Lynnwood,61,Snohomish,85,SW Snohomish (1)
+SW Snohomish,Mill Creek,61,Snohomish,87,SW Snohomish (2)
+SW Snohomish,Mountlake Terrace,61,Snohomish,89,SW Snohomish (1)
+SW Snohomish,Mukilteo,61,Snohomish,90,SW Snohomish (1)
+SW Snohomish,Uninc Urban Snoh,61,Snohomish,96,SW Snohomish (2)
+SW Snohomish,Woodway,61,Snohomish,97,SW Snohomish (1)
+Seattle,Seattle,33,King,34,Seattle and Shoreline
+Shoreline,Lake Forest Park,33,King,21,Seattle and Shoreline
+Shoreline,Shoreline,33,King,35,Seattle and Shoreline
+Snohomish Other,Darrington,61,Snohomish,78,Snohomish Other
+Snohomish Other,Gold Bar,61,Snohomish,81,Snohomish Other
+Snohomish Other,Granite Falls,61,Snohomish,82,Snohomish Other
+Snohomish Other,Index,61,Snohomish,83,Snohomish Other
+Snohomish Other,Monroe,61,Snohomish,88,Snohomish Other
+Snohomish Other,Snohomish Rural,61,Snohomish,92,Snohomish Other
+Snohomish Other,Sultan,61,Snohomish,94,Snohomish Other
+South Kitsap,Port Orchard,35,Kitsap,45,"Central, North, and South Kitsap"
+Tacoma,Fife,53,Pierce,57,Peninsula and Tacoma
+Tacoma,Ruston,53,Pierce,67,Peninsula and Tacoma
+Tacoma,Tacoma,53,Pierce,71,Peninsula and Tacoma

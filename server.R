@@ -251,6 +251,7 @@ server <- function(input, output, session) {
     
   })
   
+  
   # output$strdtavail <- reactive({
   #   # Check if runs 1 & 2 exist in strdt(), if not conditional panel disabled
   #   strdt <- strdt()

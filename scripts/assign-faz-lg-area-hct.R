@@ -1,5 +1,5 @@
 # This script will clean/categorize cross-walks created from ArcGIS for time series page.
-# Cities and Control HCTs are organized into FAZ large areas for the UI selection
+# Control HCTs are organized into FAZ large areas for the UI selection
 
 library(data.table)
 library(foreign)
@@ -7,7 +7,6 @@ library(foreign)
 dir <- 'J:\\Staff\\Christy\\luf-dashboard'
 
 ch <- read.dbf(file.path(dir, 'ctrl18_fazlg.dbf'))
-ct <- read.dbf(file.path(dir, 'cities18_fazlg.dbf'))
 
 # Control HCT
 old.ch <- read.csv('https://raw.githubusercontent.com/psrc/luv/master/QC/data/cities_faz_lgarea.csv', header = TRUE)
