@@ -18,6 +18,25 @@ timeseries_widgets_ui <- function(id) {
                     "SW Snohomish (1)",
                     "SW Snohomish (2)")
   
+  faz_lg_areas_long <- c("Eastside King",
+                         "Green River",
+                         "Seattle",
+                         "Shoreline",
+                         "SE King",
+                         "SW King",
+                         "King Other",
+                         "Central Kitsap",
+                         "North Kitsap",
+                         "South Kitsap",
+                         "Peninsula",
+                         "Tacoma",
+                         "Pierce Other",
+                         "SW Pierce",
+                         "Everett",
+                         "NW Snohomish",
+                         "Snohomish Other",
+                         "SW Snohomish")
+  
   tagList(
     wellPanel(
       uiOutput(ns('uiRun')),
@@ -28,14 +47,24 @@ timeseries_widgets_ui <- function(id) {
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
       
-      # conditional panel for cities
+      # conditional panel for cities/hct
       conditionalPanel(
-        condition = "input.geog == 'cities' | input.geog == 'Faz' | input.geog == 'hct' ",
+        condition = "input.geog == 'cities' | input.geog == 'hct' ",
         ns = ns,
         uiOutput(ns('uiLgAreaText')),
         selectInput(ns('largeArea'),
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas
+        )
+      ), # end conditional panel
+      # conditional panel for FAZ
+      conditionalPanel(
+        condition = "input.geog == 'Faz'",
+        ns = ns,
+        div(class = 'notes', 'View FAZs within a FAZ Large Area'),
+        selectInput(ns('largeAreaFaz'),
+                    label = 'FAZ Large Areas',
+                    choices = faz_lg_areas_long
         )
       ), # end conditional panel
       actionButton(ns('go'),
@@ -52,7 +81,7 @@ timeseries_widgets_server <- function(id, paths) {
     output$uiLgAreaText <- renderUI({
       geog <- switch(input$geog,
              'cities' = 'cities',
-             'Faz' = 'FAZs',
+             # 'Faz' = 'FAZs',
              'hct' = 'Control HCTs'
              )
       div(class = 'notes', paste('View', geog, 'within a FAZ Large Area'))

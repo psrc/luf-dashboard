@@ -9,7 +9,7 @@ timeseries_plot_ui <- function(id) {
   
 }
 
-timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlhctdata, paths) {
+timeseries_plot_server <- function(id, runs, geog, largearea, largeareafaz, go, alldata, ctrlhctdata, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- reactive({
@@ -54,12 +54,20 @@ timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlh
         t <- t[lgarea_group == largearea]
         
       } else if(geog == 'cities') {
+      ## Cities ----
         a_city <- a[geography == 'city']
-        # browser()
+
         # merge with lookup table
         t <- merge(a_city, city.lookup, by.x = 'name_id', by.y = 'city_id')
         setnames(t, c('city_name'), c('name'))
         t <- t[lgarea_group == largearea]
+        
+      } else if(geog == 'Faz') {
+      ## FAZ ----
+        a_faz <- a[geography == 'faz']
+        t <- merge(a_faz, faz.lookup, by.x = 'name_id', by.y = 'faz_id')
+        t[, name := paste0(LARGE_AREA, " (", name_id, ")")]
+        t <- t[LARGE_AREA == largeareafaz]
       }
       
       return(t)
@@ -74,7 +82,7 @@ timeseries_plot_server <- function(id, runs, geog, largearea, go, alldata, ctrlh
       
       if(geog == 'county') {
         ggplotly_h <- 1200
-      } else if(geog == 'hct' | geog == 'cities') {
+      } else if(geog %in% c('hct', 'cities', 'Faz')) {
         if(num_juris <= 5) {
           ggplotly_h <- 925
         } else if(num_juris > 5 & num_juris <= 10){

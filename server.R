@@ -111,6 +111,7 @@ server <- function(input, output, session) {
                            runs = input$`ts-runs`,
                            geog = input$`ts-geog`,
                            largearea = input$`ts-largeArea`,
+                           largeareafaz = input$`ts-largeAreaFaz`,
                            go = input$`ts-go`, 
                            alldata = alldt(), 
                            ctrlhctdata = ctrlhctdt(),
