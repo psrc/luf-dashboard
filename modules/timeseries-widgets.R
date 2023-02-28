@@ -47,11 +47,26 @@ timeseries_widgets_ui <- function(id) {
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
       
-      # conditional panel for cities/hct
+      # conditional panel for cities
       conditionalPanel(
-        condition = "input.geog == 'cities' | input.geog == 'hct' ",
+        condition = "input.geog == 'cities'",
         ns = ns,
-        uiOutput(ns('uiLgAreaText')),
+        # uiOutput(ns('uiLgAreaText')),
+        selectInput(ns('largeArea'),
+                    label = 'FAZ Large Area Groups',
+                    choices = faz_lg_areas
+        ),
+        radioButtons(ns('citiesYears'),
+                     label = 'Display Years',
+                     choices = c('Limited', 'All'),
+                     inline = TRUE
+        )
+      ), # end conditional panel
+      # conditional panel for hct
+      conditionalPanel(
+        condition = "input.geog == 'hct' ",
+        ns = ns,
+        # uiOutput(ns('uiLgAreaText')),
         selectInput(ns('largeArea'),
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas

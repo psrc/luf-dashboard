@@ -9,7 +9,7 @@ timeseries_plot_ui <- function(id) {
   
 }
 
-timeseries_plot_server <- function(id, runs, geog, largearea, largeareafaz, go, alldata, ctrlhctdata, paths) {
+timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareafaz, go, alldata, ctrlhctdata, cities_an_data, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- reactive({
@@ -55,18 +55,27 @@ timeseries_plot_server <- function(id, runs, geog, largearea, largeareafaz, go, 
         
       } else if(geog == 'cities') {
       ## Cities ----
-        a_city <- a[geography == 'city']
-
-        # merge with lookup table
-        t <- merge(a_city, city.lookup, by.x = 'name_id', by.y = 'city_id')
+        if(cityyears == 'All') {
+          a_city <- cities_an_data
+          
+          # merge with lookup table
+          t <- merge(a_city, city.lookup, by = 'city_id')
+          setnames(t, c('attribute'), c('indicator'))
+        } else {
+          a_city <- a[geography == 'city']
+          
+          # merge with lookup table
+          t <- merge(a_city, city.lookup, by.x = 'name_id', by.y = 'city_id')
+          
+        }
         setnames(t, c('city_name'), c('name'))
         t <- t[lgarea_group == largearea]
-        
+
       } else if(geog == 'Faz') {
       ## FAZ ----
         a_faz <- a[geography == 'faz']
         t <- merge(a_faz, faz.lookup, by.x = 'name_id', by.y = 'faz_id')
-        t[, name := paste0(LARGE_AREA, " (", name_id, ")")]
+        t[, name := paste0(Name, " (", name_id, ")")]
         t <- t[LARGE_AREA == largeareafaz]
       }
       
@@ -104,7 +113,7 @@ timeseries_plot_server <- function(id, runs, geog, largearea, largeareafaz, go, 
               axis.text.x = element_text(size = 8, hjust = 1),
               text = element_text(family="Poppins"))
       
-      if(geog == 'hct') {
+      if(geog == 'hct' | cityyears == 'All') {
        g <- g +
           scale_x_discrete(breaks = seq(2015, 2050, by = 5))
       }

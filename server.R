@@ -110,11 +110,13 @@ server <- function(input, output, session) {
     timeseries_plot_server('tsContent', 
                            runs = input$`ts-runs`,
                            geog = input$`ts-geog`,
+                           cityyears = input$`ts-citiesYears`,
                            largearea = input$`ts-largeArea`,
                            largeareafaz = input$`ts-largeAreaFaz`,
                            go = input$`ts-go`, 
                            alldata = alldt(), 
                            ctrlhctdata = ctrlhctdt(),
+                           cities_an_data = cities_an_dt(),
                            paths = paths()
     )
   })
@@ -252,18 +254,27 @@ server <- function(input, output, session) {
     
   })
   
-  
-  # output$strdtavail <- reactive({
-  #   # Check if runs 1 & 2 exist in strdt(), if not conditional panel disabled
-  #   strdt <- strdt()
-  # 
-  #   runnames <- map(input$`runComp-runs`, ~str_split(.x, '/')) %>% flatten() %>% map(., ~pluck(.x, length(.x))) %>% unlist()
-  #   c1 <- runnames[1] %in% strdt[, run]
-  #   c2 <- runnames[2] %in% strdt[, run]
-  #   v <- c1 == c2
-  #   return(v)
-  # })
-  # outputOptions(output, 'strdtavail', suspendWhenHidden = FALSE)
-  # condition = "(input.indicator == 'Residential Units' | input.indicator == 'Households') && output.strdtavail &&
-  #                                       input.geography == 'faz'",
+  cities_an_dt <- eventReactive(input$`runChoice_multi-go`,{
+    # build annual cities source table
+    
+    # extract runs from abs paths
+    runs <- paths()
+    
+    d <- NULL
+    
+    for (r in 1:length(runs)) {
+      for (i in 1:length(attribute)){
+        filename <- paste0('city__',"table",'__',attribute[i], 'An.csv')
+        
+        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+        dt <- melt(dt, id.vars = 'city_id', variable.name = 'attribute', value.name = 'estimate')
+        dt[, run := names(runs)[r]]
+        ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
+      }
+    }
+    
+    d[, `:=`(year = str_extract(attribute, "\\d+"),
+             attribute = str_extract(attribute, '\\w+(?=A)'))]
+  })
+
 }
