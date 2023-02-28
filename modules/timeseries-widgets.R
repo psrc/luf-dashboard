@@ -18,24 +18,68 @@ timeseries_widgets_ui <- function(id) {
                     "SW Snohomish (1)",
                     "SW Snohomish (2)")
   
+  faz_lg_areas_long <- c("Eastside King",
+                         "Green River",
+                         "Seattle",
+                         "Shoreline",
+                         "SE King",
+                         "SW King",
+                         "King Other",
+                         "Central Kitsap",
+                         "North Kitsap",
+                         "South Kitsap",
+                         "Peninsula",
+                         "Tacoma",
+                         "Pierce Other",
+                         "SW Pierce",
+                         "Everett",
+                         "NW Snohomish",
+                         "Snohomish Other",
+                         "SW Snohomish")
+  
   tagList(
     wellPanel(
       uiOutput(ns('uiRun')),
       selectInput(ns('geog'),
                   label = 'Geography',
-                  choices = c('County & Region', 
-                              'Control HCT',  
+                  choices = c('County & Region' = 'county', 
+                              'Control HCT' = 'hct',  
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
       
       # conditional panel for cities
       conditionalPanel(
-        condition = "input.geog == 'cities' | input.geog == 'Faz' ",
+        condition = "input.geog == 'cities'",
         ns = ns,
-        uiOutput(ns('uiLgAreaText')),
+        # uiOutput(ns('uiLgAreaText')),
         selectInput(ns('largeArea'),
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas
+        ),
+        radioButtons(ns('citiesYears'),
+                     label = 'Display Years',
+                     choices = c('Limited', 'All'),
+                     inline = TRUE
+        )
+      ), # end conditional panel
+      # conditional panel for hct
+      conditionalPanel(
+        condition = "input.geog == 'hct' ",
+        ns = ns,
+        # uiOutput(ns('uiLgAreaText')),
+        selectInput(ns('largeArea'),
+                    label = 'FAZ Large Area Groups',
+                    choices = faz_lg_areas
+        )
+      ), # end conditional panel
+      # conditional panel for FAZ
+      conditionalPanel(
+        condition = "input.geog == 'Faz'",
+        ns = ns,
+        div(class = 'notes', 'View FAZs within a FAZ Large Area'),
+        selectInput(ns('largeAreaFaz'),
+                    label = 'FAZ Large Areas',
+                    choices = faz_lg_areas_long
         )
       ), # end conditional panel
       actionButton(ns('go'),
@@ -52,13 +96,15 @@ timeseries_widgets_server <- function(id, paths) {
     output$uiLgAreaText <- renderUI({
       geog <- switch(input$geog,
              'cities' = 'cities',
-             'Faz' = 'FAZs')
+             # 'Faz' = 'FAZs',
+             'hct' = 'Control HCTs'
+             )
       div(class = 'notes', paste('View', geog, 'within a FAZ Large Area'))
     })
     
     output$uiRun <- renderUI({
       selectInput(ns('runs'),
-                  label = 'Compare runs',
+                  label = 'Select run(s)',
                   choices = paths,
                   multiple = TRUE)
     })
