@@ -75,11 +75,12 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       }
       dt[,"diff" := (estrun1-estrun2)]
 
+      # merge with lookup tables for names
       dt <- switch(geog,
              zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
-             faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id")#,
-             # merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames("city_name", "Name")
-      )
+             faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
+             city = merge(dt, city.lookup, by.x = "name_id", by.y = "city_id")) %>% setnames(c("city_name", "county"), c("Name", "County"))
+    
       return(dt)
     })
 
