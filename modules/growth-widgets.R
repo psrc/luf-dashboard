@@ -1,9 +1,9 @@
-# This module returns the selection widgets on the Growth tab. Similiar to Run Comparison except for only one run and utilizes a time slider.
+# This module returns the selection widgets on the Growth tab. Similar to Run Comparison except for only one run and utilizes a time slider.
 
 growth_widgets_ui <- function(id) {
   ns <- NS(id)
  
-  geogs <- c("TAZ"='zone', "FAZ"='faz')
+  geogs <- c("TAZ"='zone', "FAZ"='faz', "Cities" = 'city')
   inds <- c("Total Population", "Households", "Employment", "Residential Units")
   
   tagList(
