@@ -4,16 +4,18 @@
 joinShp2Tbl <- function(geog, table){
   # Joins reactive tables to respective shapefiles.
 
-  switch(geog,
+  s <- switch(geog,
          zone = merge(zone.shape, table, by = "name_id"),
-         faz = merge(faz.shape, table, by = "name_id")#,
-         
-         # zone = merge(zone.shape, table, by.x = "taz", by.y = "name_id"),
-         # faz = merge(faz.shape, table, by.x = "faz10", by.y = "name_id")#,
-         # merge(city.shape, table, by.x = "city_id", by.y = "name_id"),
-         # {centers.shape <- centers[centers$name_id != 0,];
-         # merge(centers.shape, table, by.x = "name_id", by.y = "name_id")}
-  )
+         faz = merge(faz.shape, table, by = "name_id"))
+  
+  if(geog == 'city') {
+    # read shp from ElmerGeo
+    s <- st_read_elmergeo(cities.shape)
+    colnames(s)[which(names(s) == "city_id")] <- "name_id"
+    s <- merge(s, table, by = "name_id")
+  }
+  
+  return(s)
 }
 
 map.colorBins <- function(diffcolumn){
