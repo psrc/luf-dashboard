@@ -39,7 +39,7 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
       gYear <- inputyears
     
       runnames <- get_runnames(run)
-
+      
       if (is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
           (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city")) ){
 
@@ -48,10 +48,10 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
       } else {
         dt1 <- strdt[run == runnames & geography == geog & indicator == ind & strtype == struc & (year == gYear[1] | year == gYear[2]),
                      .(name_id, geography, run, indicator, strtype, year, estimate)]
-        
+
         dt <- dcast.data.table(dt1, name_id + geography + run + indicator ~ year, value.var = "estimate")
         setnames(dt, colnames(dt)[(ncol(dt)-1):ncol(dt)], c('yr1', 'yr2'))
-      
+
       }
       dt[,"diff" := (yr2-yr1)]
 

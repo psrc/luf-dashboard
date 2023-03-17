@@ -9,7 +9,7 @@ timeseries_plot_ui <- function(id) {
   
 }
 
-timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareafaz, go, alldata, ctrlhctdata, cities_an_data, paths) {
+timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareahct, largeareafaz, go, alldata, ctrlhctdata, cities_an_data, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- reactive({
@@ -46,12 +46,11 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
       } else if(geog == 'hct') {
       ## Control HCT ----  
         ch <- ctrlhctdata
-        ch[run %in% runnames, ]
-        
+        ch <- ch[run %in% runnames, ]
         # merge with lookup table
         t <- merge(ch, ctrlhct.lookup[, .(control_id, control_na, lgarea_group)], by = 'control_id')
-        setnames(t, c('attribute', 'control_na'), c('indicator', 'name'))
-        t <- t[lgarea_group == largearea]
+        setnames(t, c('control_na'), c('name'))
+        t <- t[lgarea_group == largeareahct]
         
       } else if(geog == 'cities') {
       ## Cities ----
@@ -60,7 +59,6 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
           
           # merge with lookup table
           t <- merge(a_city, city.lookup, by = 'city_id')
-          setnames(t, c('attribute'), c('indicator'))
         } else {
           a_city <- a[geography == 'city']
           

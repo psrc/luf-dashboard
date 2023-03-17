@@ -51,7 +51,7 @@ timeseries_widgets_ui <- function(id) {
       conditionalPanel(
         condition = "input.geog == 'cities'",
         ns = ns,
-        # uiOutput(ns('uiLgAreaText')),
+        div(class = 'notes', 'View Cities within a FAZ Large Area'),
         selectInput(ns('largeArea'),
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas
@@ -66,8 +66,8 @@ timeseries_widgets_ui <- function(id) {
       conditionalPanel(
         condition = "input.geog == 'hct' ",
         ns = ns,
-        # uiOutput(ns('uiLgAreaText')),
-        selectInput(ns('largeArea'),
+        div(class = 'notes', 'View Control HCTs within a FAZ Large Area'),
+        selectInput(ns('largeAreaHct'),
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas
         )
@@ -92,15 +92,6 @@ timeseries_widgets_ui <- function(id) {
 timeseries_widgets_server <- function(id, paths) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
-    output$uiLgAreaText <- renderUI({
-      geog <- switch(input$geog,
-             'cities' = 'cities',
-             # 'Faz' = 'FAZs',
-             'hct' = 'Control HCTs'
-             )
-      div(class = 'notes', paste('View', geog, 'within a FAZ Large Area'))
-    })
     
     output$uiRun <- renderUI({
       selectInput(ns('runs'),

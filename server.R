@@ -112,6 +112,7 @@ server <- function(input, output, session) {
                            geog = input$`ts-geog`,
                            cityyears = input$`ts-citiesYears`,
                            largearea = input$`ts-largeArea`,
+                           largeareahct = input$`ts-largeAreaHct`,
                            largeareafaz = input$`ts-largeAreaFaz`,
                            go = input$`ts-go`, 
                            alldata = alldt(), 
@@ -243,14 +244,14 @@ server <- function(input, output, session) {
         filename <- paste0('control__',"table",'__',attribute[i], 'An.csv')
         
         dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
-        dt <- melt(dt, id.vars = 'control_id', variable.name = 'attribute', value.name = 'estimate')
+        dt <- melt(dt, id.vars = 'control_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
         ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
       }
     }
     
-    d[, `:=`(year = str_extract(attribute, "\\d+"),
-              attribute = str_extract(attribute, '\\w+(?=A)'))]
+    d[, `:=`(year = str_extract(indicator, "\\d+"),
+              indicator = str_extract(indicator, '\\w+(?=A)'))]
     
   })
   
@@ -267,14 +268,14 @@ server <- function(input, output, session) {
         filename <- paste0('city__',"table",'__',attribute[i], 'An.csv')
         
         dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
-        dt <- melt(dt, id.vars = 'city_id', variable.name = 'attribute', value.name = 'estimate')
+        dt <- melt(dt, id.vars = 'city_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
         ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
       }
     }
     
-    d[, `:=`(year = str_extract(attribute, "\\d+"),
-             attribute = str_extract(attribute, '\\w+(?=A)'))]
+    d[, `:=`(year = str_extract(indicator, "\\d+"),
+             indicator = str_extract(indicator, '\\w+(?=A)'))]
   })
 
 }
