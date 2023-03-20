@@ -94,6 +94,7 @@ server <- function(input, output, session) {
                                 input$`runComp-go`,
                                 alldt(), 
                                 strdt(),
+                                ctrlhctdt(),
                                 paths(),
                                 baseyears()
     ) 
