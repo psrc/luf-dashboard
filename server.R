@@ -60,6 +60,7 @@ server <- function(input, output, session) {
                                input$`growth-go`,
                                alldt(), 
                                strdt(),
+                               ctrlhctdt(),
                                paths(),
                                baseyears()
                                )
@@ -93,6 +94,7 @@ server <- function(input, output, session) {
                                 input$`runComp-go`,
                                 alldt(), 
                                 strdt(),
+                                ctrlhctdt(),
                                 paths(),
                                 baseyears()
     ) 
@@ -246,12 +248,20 @@ server <- function(input, output, session) {
         dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
         dt <- melt(dt, id.vars = 'control_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
+        
         ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
       }
     }
     
     d[, `:=`(year = str_extract(indicator, "\\d+"),
-              indicator = str_extract(indicator, '\\w+(?=A)'))]
+             indicator = str_extract(indicator, '\\w+(?=A)'),
+             geography = 'Control HCT')]
+    d[, indicator := fcase(indicator == "population", "Total Population",
+                           indicator == "households", "Households",
+                           indicator == "employment", "Employment",
+                           indicator == "residential_units", "Residential Units")]
+    setnames(d, 'control_id', 'name_id')
+    return(d)
     
   })
   
