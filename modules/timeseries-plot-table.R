@@ -12,7 +12,7 @@ timeseries_plot_ui <- function(id) {
 timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareahct, largeareafaz, go, alldata, ctrlhctdata, cities_an_data, paths) {
   moduleServer(id, function(input, output, session) {
     
-    table <- reactive({
+    table <- eventReactive(go, {
       # returns underlying data table for all visuals
 
       alldt <- alldata
@@ -48,7 +48,7 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
         ch <- ctrlhctdata
         ch <- ch[run %in% runnames, ]
         # merge with lookup table
-        t <- merge(ch, ctrlhct.lookup[, .(control_id, control_na, lgarea_group)], by = 'control_id')
+        t <- merge(ch, ctrlhct.lookup[, .(control_id, control_na, lgarea_group)], by.x = 'name_id', by.y = 'control_id')
         setnames(t, c('control_na'), c('name'))
         t <- t[lgarea_group == largeareahct]
         
