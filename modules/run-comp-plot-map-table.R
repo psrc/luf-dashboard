@@ -38,34 +38,51 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       strdt <- strdata
       alldt <- alldata
       byears <- baseyears
-      # byears <- baseyears()
     
       runnames <- get_runnames(runs)
-
+      
       if (is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
-          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city")) ){
-        
-        # run 1
-        b1 <- byears[run == runnames[1],][['baseyear']]
-        dt1 <- alldt[run == runnames[1] & geography == geog & indicator == ind,
-                     .(name_id, geography, indicator, get(b1), get(paste0('yr',inputyear)))]
-        setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
-        
-        # run 2
-        b2 <- byears[run == runnames[2],][['baseyear']]
-        dt2 <- alldt[run == runnames[2] & geography == geog & indicator == ind,
-                     .(name_id, get(b2),get(paste0('yr', inputyear)))]
-        setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
-        
+          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "hct")) ){
+
+        if(geog == 'hct') {
+          # run 1
+          b1 <- byears[run == runnames[1],][['baseyear']] %>% str_extract("\\d+")
+          dt1 <- ctrlhctdata[run == runnames[1] & indicator == ind & (year %in% c(b1, inputyear)),]
+          dt1 <- dcast(dt1, name_id + indicator + run + geography ~ year, value.var = 'estimate')
+          setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
+          dt1 <- dt1[, .(name_id, indicator, geography, base_estrun1, estrun1)]
+
+          # run 2
+          b2 <- byears[run == runnames[2],][['baseyear']] %>% str_extract("\\d+")
+          dt2 <- ctrlhctdata[run == runnames[2] & indicator == ind & (year %in% c(b2, inputyear)), ]
+          dt2 <- dcast(dt2, name_id + indicator + run + geography ~ year, value.var = 'estimate')
+          setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
+          dt2 <- dt2[, .(name_id, base_estrun2, estrun2)]
+
+        } else {
+          # run 1
+          b1 <- byears[run == runnames[1],][['baseyear']]
+          dt1 <- alldt[run == runnames[1] & geography == geog & indicator == ind,
+                       .(name_id, geography, indicator, get(b1), get(paste0('yr',inputyear)))]
+          setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
+
+          # run 2
+          b2 <- byears[run == runnames[2],][['baseyear']]
+          dt2 <- alldt[run == runnames[2] & geography == geog & indicator == ind,
+                       .(name_id, get(b2),get(paste0('yr', inputyear)))]
+          setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
+
+        }
         dt <- merge(dt1, dt2, by = 'name_id')
+
       } else {
-        
+
         # run 1
         b1 <- str_extract(byears[run == runnames[1],][['baseyear']], "\\d+")
         dt1 <- strdt[run == runnames[1] & geography == geog & (year == b1 | year == inputyear) & indicator == ind & strtype == struc]
         dt1.cast <- dcast.data.table(dt1, name_id + indicator + geography ~ year, value.var = "estimate")
         setnames(dt1.cast, colnames(dt1.cast)[4:5], c('base_estrun1', 'estrun1'))
-        
+
         # run 2
         b2 <- str_extract(byears[run == runnames[2],][['baseyear']], "\\d+")
         dt2 <- strdt[run == runnames[2] & geography == geog & (year == b2 | year == inputyear)  & indicator == ind & strtype == struc]
@@ -73,65 +90,14 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
         setnames(dt2.cast, colnames(dt2.cast)[2:3], c('base_estrun2', 'estrun2'))
         dt <- merge(dt1.cast, dt2.cast, by = 'name_id')
       }
-      
-      
-      # if (is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
-      #     (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "hct")) ){
-      # 
-      #   if(geog == 'hct') {
-      #     # run 1
-      #     b1 <- byears[run == runnames[1],][['baseyear']] %>% str_extract("\\d+")
-      #     # browser()
-      #     dt1 <- ctrlhctdata[run == runnames[1] & indicator == ind & (year %in% c(b1, inputyear)),]
-      #     d1 <- dcast(dt1, name_id + indicator + run + geography ~ year, value.var = 'estimate')
-      #     setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
-      #     
-      #     # run 2
-      #     b2 <- byears[run == runnames[2],][['baseyear']]
-      #     dt2 <- ctrlhctdata[run == runnames[2] & geography == geog & indicator == ind,
-      #                  .(name_id, get(b2),get(paste0('yr', inputyear)))]
-      #     setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
-      #     
-      #     # dt <- merge(dt1, dt2, by = 'name_id')
-      #   } else {
-      #     # run 1
-      #     b1 <- byears[run == runnames[1],][['baseyear']]
-      #     dt1 <- alldt[run == runnames[1] & geography == geog & indicator == ind,
-      #                  .(name_id, geography, indicator, get(b1), get(paste0('yr',inputyear)))]
-      #     setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
-      #     
-      #     # run 2
-      #     b2 <- byears[run == runnames[2],][['baseyear']]
-      #     dt2 <- alldt[run == runnames[2] & geography == geog & indicator == ind,
-      #                  .(name_id, get(b2),get(paste0('yr', inputyear)))]
-      #     setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
-      #     
-      #     # dt <- merge(dt1, dt2, by = 'name_id')
-      #   }
-      #   dt <- merge(dt1, dt2, by = 'name_id')
-      #   
-      # } else {
-      # 
-      #   # run 1
-      #   b1 <- str_extract(byears[run == runnames[1],][['baseyear']], "\\d+")
-      #   dt1 <- strdt[run == runnames[1] & geography == geog & (year == b1 | year == inputyear) & indicator == ind & strtype == struc]
-      #   dt1.cast <- dcast.data.table(dt1, name_id + indicator + geography ~ year, value.var = "estimate")
-      #   setnames(dt1.cast, colnames(dt1.cast)[4:5], c('base_estrun1', 'estrun1'))
-      # 
-      #   # run 2
-      #   b2 <- str_extract(byears[run == runnames[2],][['baseyear']], "\\d+")
-      #   dt2 <- strdt[run == runnames[2] & geography == geog & (year == b2 | year == inputyear)  & indicator == ind & strtype == struc]
-      #   dt2.cast <- dcast.data.table(dt2, name_id ~ year, value.var = "estimate")
-      #   setnames(dt2.cast, colnames(dt2.cast)[2:3], c('base_estrun2', 'estrun2'))
-      #   dt <- merge(dt1.cast, dt2.cast, by = 'name_id')
-      # }
       dt[,"diff" := (estrun1-estrun2)]
 
       # merge with lookup tables for names
       dt <- switch(geog,
              zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
              faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
-             city = merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames(c("city_name", "county"), c("Name", "County")))
+             city = merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames(c("city_name", "county"), c("Name", "County")),
+             hct = merge(dt, ctrlhct.lookup, by.x = "name_id", by.y = "control_id") %>% setnames(c("control_na", "county"), c("Name", "County")))
     
       return(dt)
     })
@@ -141,8 +107,6 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
 
       runnames <- get_runnames(runs)
       runnames.trim <- get_trim_runnames(runnames)
-      baseyears <- baseyears
-      # baseyears <- baseyears()
 
       b <- baseyears[run %in% runnames, ]
 
@@ -162,7 +126,8 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       switch(geog,
              zone = "TAZ",
              faz = "FAZ",
-             city = "City")
+             city = "City",
+             hct = "Control HCT")
     })
     
     shape <- reactive({
