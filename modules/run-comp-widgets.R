@@ -15,8 +15,7 @@ runcomp_widgets_server <- function(id, paths) {
     
     output$uiRunComp <- renderUI({
       
-      # geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city', "Control HCT" = 'hct')
-      geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city')
+      geogs <- c("TAZ"='zone', "FAZ"='faz', "City"='city', "Control HCT" = 'hct')
       inds <- c("Total Population", "Households", "Employment", "Residential Units")
       
       tagList(
