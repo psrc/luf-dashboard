@@ -9,7 +9,7 @@ timeseries_plot_ui <- function(id) {
   
 }
 
-timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareahct, largeareafaz, go, alldata, ctrlhctdata, cities_an_data, paths) {
+timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareahct, largeareafaz, go, alldata, ctrldata, cities_an_data, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- eventReactive(go, {
@@ -43,13 +43,13 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
         t <- rbindlist(list(a_cnty, a_reg), use.names=TRUE)
         t[, name := factor(name, levels = c('King', 'Kitsap', 'Pierce', 'Snohomish', 'Region'))]
       
-      } else if(geog == 'hct') {
-      ## Control HCT ----  
-        ch <- ctrlhctdata
+      } else if(geog == 'control') {
+      ## Control ----  
+        ch <- ctrldata
         ch <- ch[run %in% runnames, ]
         # merge with lookup table
-        t <- merge(ch, ctrlhct.lookup[, .(control_id, control_na, lgarea_group)], by.x = 'name_id', by.y = 'control_id')
-        setnames(t, c('control_na'), c('name'))
+        t <- merge(ch, ctrl.lookup[, .(control_id, control_name, lgarea_group)], by.x = 'name_id', by.y = 'control_id')
+        setnames(t, c('control_name'), c('name'))
         t <- t[lgarea_group == largeareahct]
         
       } else if(geog == 'cities') {
@@ -89,7 +89,7 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
       
       if(geog == 'county') {
         ggplotly_h <- 1200
-      } else if(geog %in% c('hct', 'cities', 'Faz')) {
+      } else if(geog %in% c('control', 'cities', 'Faz')) {
         if(num_juris <= 5) {
           ggplotly_h <- 925
         } else if(num_juris > 5 & num_juris <= 10){
@@ -111,7 +111,7 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
               axis.text.x = element_text(size = 8, hjust = 1),
               text = element_text(family="Poppins"))
       
-      if(geog == 'hct' | cityyears == 'All') {
+      if(geog == 'control' | cityyears == 'All') {
        g <- g +
           scale_x_discrete(breaks = seq(2015, 2050, by = 5))
       }

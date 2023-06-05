@@ -60,7 +60,7 @@ server <- function(input, output, session) {
                                input$`growth-go`,
                                alldt(), 
                                strdt(),
-                               ctrlhctdt(),
+                               ctrldt(),
                                paths(),
                                baseyears()
                                )
@@ -94,7 +94,7 @@ server <- function(input, output, session) {
                                 input$`runComp-go`,
                                 alldt(), 
                                 strdt(),
-                                ctrlhctdt(),
+                                ctrldt(),
                                 paths(),
                                 baseyears()
     ) 
@@ -118,7 +118,7 @@ server <- function(input, output, session) {
                            largeareafaz = input$`ts-largeAreaFaz`,
                            go = input$`ts-go`, 
                            alldata = alldt(), 
-                           ctrlhctdata = ctrlhctdt(),
+                           ctrldata = ctrldt(),
                            cities_an_data = cities_an_dt(),
                            paths = paths()
     )
@@ -232,7 +232,7 @@ server <- function(input, output, session) {
     return(df)
   })
   
-  ctrlhctdt <- eventReactive(input$`runChoice_multi-go`,{
+  ctrldt <- eventReactive(input$`runChoice_multi-go`,{
     # build control HCT source table
     
     # extract runs from abs paths
@@ -255,7 +255,7 @@ server <- function(input, output, session) {
     
     d[, `:=`(year = str_extract(indicator, "\\d+"),
              indicator = str_extract(indicator, '\\w+(?=A)'),
-             geography = 'Control HCT')]
+             geography = 'Control')]
     d[, indicator := fcase(indicator == "population", "Total Population",
                            indicator == "households", "Households",
                            indicator == "employment", "Employment",

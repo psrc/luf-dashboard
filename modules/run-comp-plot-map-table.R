@@ -29,7 +29,7 @@ runcomp_plot_map_tbl_ui <- function(id) {
   
 }
 
-runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, ctrlhctdata, paths, baseyears) {
+runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, go, alldata, strdata, ctrldata, paths, baseyears) {
   moduleServer(id, function(input, output, session) {
 
     table <- eventReactive(go, {
@@ -42,19 +42,19 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
       runnames <- get_runnames(runs)
       
       if (is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
-          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "hct")) ){
+          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "control")) ){
 
-        if(geog == 'hct') {
+        if(geog == 'control') {
           # run 1
           b1 <- byears[run == runnames[1],][['baseyear']] %>% str_extract("\\d+")
-          dt1 <- ctrlhctdata[run == runnames[1] & indicator == ind & (year %in% c(b1, inputyear)),]
+          dt1 <- ctrldata[run == runnames[1] & indicator == ind & (year %in% c(b1, inputyear)),]
           dt1 <- dcast(dt1, name_id + indicator + run + geography ~ year, value.var = 'estimate')
           setnames(dt1, dt1[,c((ncol(dt1)-1), ncol(dt1))], c('base_estrun1', 'estrun1'))
           dt1 <- dt1[, .(name_id, indicator, geography, base_estrun1, estrun1)]
 
           # run 2
           b2 <- byears[run == runnames[2],][['baseyear']] %>% str_extract("\\d+")
-          dt2 <- ctrlhctdata[run == runnames[2] & indicator == ind & (year %in% c(b2, inputyear)), ]
+          dt2 <- ctrldata[run == runnames[2] & indicator == ind & (year %in% c(b2, inputyear)), ]
           dt2 <- dcast(dt2, name_id + indicator + run + geography ~ year, value.var = 'estimate')
           setnames(dt2, dt2[,c((ncol(dt2)-1), ncol(dt2))], c('base_estrun2', 'estrun2'))
           dt2 <- dt2[, .(name_id, base_estrun2, estrun2)]
@@ -97,7 +97,7 @@ runcomp_plot_map_tbl_server <- function(id, runs, geog, struc, ind, inputyear, g
              zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
              faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
              city = merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames(c("city_name", "county"), c("Name", "County")),
-             hct = merge(dt, ctrlhct.lookup, by.x = "name_id", by.y = "control_id") %>% setnames(c("control_na", "county"), c("Name", "County")))
+             control = merge(dt, ctrl.lookup, by.x = "name_id", by.y = "control_id") %>% setnames(c("control_name", "county"), c("Name", "County")))
     
       return(dt)
     })
