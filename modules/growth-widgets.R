@@ -3,7 +3,8 @@
 growth_widgets_ui <- function(id) {
   ns <- NS(id)
  
-  geogs <- c("TAZ"='zone', "FAZ"='faz', "Cities" = 'city', "Control HCT" = "hct")
+  # geogs <- c("TAZ"='zone', "FAZ"='faz', "Cities" = 'city', "Control HCT" = "hct")
+  geogs <- c("TAZ"='zone', "FAZ"='faz', "Cities" = 'city', "Control" = "control")
   inds <- c("Total Population", "Households", "Employment", "Residential Units")
   
   tagList(

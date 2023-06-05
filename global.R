@@ -16,14 +16,14 @@ rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
 years <- seq(2014, 2050)
-luv.years <- c(2014, 2015, 2020, 2025, 2030, 2035, 2040)
 
 # lookups
 faz.lookup <- fread(file.path('data', "faz_names.txt"))
 zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
-ctrlhct.lookup <- fread(file.path('data','control_hct.csv'))
+# OLD.ctrlhct.lookup <- fread(file.path('data','control_hct_old.csv'))
+ctrl.lookup <- fread(file.path('data','controls.csv')) # varname should be "controls" formerly ctrlhct
 city.lookup <- fread(file.path('data', "cities18.csv"))
 
 # spatial features

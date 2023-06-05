@@ -13,7 +13,7 @@ joinShp2Tbl <- function(geog, table){
     s <- st_read_elmergeo(cities.shape)
     colnames(s)[which(names(s) == "city_id")] <- "name_id"
     s <- merge(s, table, by = "name_id")
-  } else if(geog == 'hct') {
+  } else if(geog == 'control') {
     s <- st_read_elmergeo(control.shape)
     colnames(s)[which(names(s) == "control_id")] <- "name_id"
     s <- merge(s, table, by = "name_id")
