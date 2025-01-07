@@ -27,7 +27,7 @@ growth_plot_map_tbl_ui <- function(id) {
   )
 }
 
-growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go, alldata, strdata, ctrldata, paths, baseyears) {
+growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go, alldata, strdata, ctrldata, ctrlhctdata, paths, baseyears) {
   moduleServer(id, function(input, output, session) {
     
     table <- eventReactive(go, {
@@ -41,10 +41,16 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
       runnames <- get_runnames(run)
       
       if(is.null(struc) | struc == "All" | (ind %in% c("Total Population", "Employment")) |
-          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "control")) ){
+          (ind %in% c("Households", "Residential Units") & geog %in% c("zone", "city", "control", "hct")) ){
         
-        if(geog == 'control') {
-          dt <- ctrldata[run == runnames & indicator == ind & year %in% c(gYear[1], gYear[2]),]
+        # if(geog == 'control') {
+        if(geog %in% c('control', 'hct')) {
+          if(geog == 'control') {
+            dt <- ctrldata[run == runnames & indicator == ind & year %in% c(gYear[1], gYear[2]),] 
+          } else {
+            dt <- ctrlhctdata[run == runnames & indicator == ind & year %in% c(gYear[1], gYear[2]),]
+          }
+          # dt <- ctrldata[run == runnames & indicator == ind & year %in% c(gYear[1], gYear[2]),]
           dt <- dcast(dt, name_id + indicator + run + geography ~ year, value.var = "estimate")
           setnames(dt, c(as.character(gYear[1]), as.character(gYear[2])), c("yr1", "yr2"))
         } else {
@@ -67,7 +73,8 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
              zone = merge(dt, zone.lookup, by.x = "name_id", by.y = "zone_id") %>% merge(faz.lookup, by = c("faz_id", "County")),
              faz = merge(dt, faz.lookup, by.x = "name_id", by.y = "faz_id"),
              city = merge(dt, city.lookup, by.x = "name_id", by.y = "city_id") %>% setnames(c("city_name", "county"), c("Name", "County")),
-             control = merge(dt, ctrl.lookup, by.x = "name_id", by.y = "control_id") %>% setnames(c("control_name", "county"), c("Name", "County"))
+             control = merge(dt, ctrl.lookup, by.x = "name_id", by.y = "control_id") %>% setnames(c("control_name", "county"), c("Name", "County")),
+             hct = merge(dt, ctrlhct.lookup, by.x = "name_id", by.y = "control_hct_id") %>% setnames(c("control_hct_name", "county"), c("Name", "County"))
              )
       
       return(dt)
@@ -95,7 +102,8 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
              zone = "TAZ",
              faz = "FAZ",
              city = "City",
-             control = "Control")
+             control = "Control",
+             hct = "Control HCT")
     })
     
     shape <- reactive({

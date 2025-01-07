@@ -17,6 +17,11 @@ joinShp2Tbl <- function(geog, table){
     s <- st_read_elmergeo(control.shape)
     colnames(s)[which(names(s) == "control_id")] <- "name_id"
     s <- merge(s, table, by = "name_id")
+  } else if(geog == 'hct') {
+    # browser()
+    s <- st_read_elmergeo(controlhct.shape)
+    colnames(s)[which(names(s) == "chct_id")] <- "name_id"
+    s <- merge(s, table, by = "name_id")
   }
   
   return(s)

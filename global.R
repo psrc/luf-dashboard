@@ -10,8 +10,8 @@ library(data.table)
 library(tidyverse)
 library(psrcelmer)
 
-# rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
-rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
+rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
+# rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
@@ -22,8 +22,8 @@ faz.lookup <- fread(file.path('data', "faz_names.txt"))
 zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
-# OLD.ctrlhct.lookup <- fread(file.path('data','control_hct_old.csv'))
-ctrl.lookup <- fread(file.path('data','controls.csv')) # varname should be "controls" formerly ctrlhct
+ctrl.lookup <- fread(file.path('data','controls.csv')) 
+ctrlhct.lookup <- fread(file.path('data','control_hcts.csv')) 
 city.lookup <- fread(file.path('data', "cities18.csv"))
 
 # spatial features
@@ -39,8 +39,10 @@ faz.shape <- st_read(file.path(arc.root, faz.link)) %>%
 # names of layers in ElmerGeo
 cities.shape <- 'cities18_dashboard'
 control.shape <- 'control18_dashboard'
-subreg.shape <- 'subregs18_dashboard'
-target.shape <- 'target18_dashboard'
+controlhct.shape <- 'control_hct18_dashboard'
+# controlhct.shape <- 'chct18_simplify'
+# subreg.shape <- 'subregs18_dashboard'
+# target.shape <- 'target18_dashboard'
 
 # run all files in the modules sub-directory
 module_files <- list.files('modules', full.names = TRUE)
