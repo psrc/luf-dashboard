@@ -1,49 +1,59 @@
 create.tsTable <- function(table, idname, runs, tsyear, baseyear){ #idname aka 'County' or 'Name'
   # Prepares generic topsheet table for main indicators (households, population, employment)
+  target.year.col <- paste0("yr", tsyear)
   
-  runs <- get_runnames(runs) %>% get_trim_runnames()
+  table_m <- melt.data.table(table, 
+                             id.vars = c("County", "indicator", "run"), 
+                             measure.vars = setdiff(colnames(table), c("County", "indicator", "run")),
+                             variable.name = "variable", 
+                             value.name = "value")
   
-  sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-  sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
-  table[, run := get_trim_runnames(run)]
+  # isolate respective baseyear values by run
+  table_mg <- merge(table_m, baseyear, by.x = c("run", "variable"), by.y = c("run", "baseyear"))
+  setnames(table_mg, c("value", "variable"), c("base", "base_year"))
   
-  t1 <- dcast.data.table(table, paste(idname, "~ run"), value.var = sel.yrs.col)
-  setcolorder(t1, c(idname, paste0(sel.yrs.col[1],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[2]), paste0(sel.yrs.col[1],"_",runs[2])))
-  t1[, ncol(t1) := NULL]
-  t1[, Change := (t1[[ncol(t1)-1]]-t1[[ncol(t1)]])
-  ][, Per.Change := round((Change/t1[[4]])*100, 2)
-  ][, Per.Growth := round(Change/(t1[[4]]-t1[[2]])*100, 2)
-  ][, r1.baseyr := (t1[[3]]-t1[[2]])
-  ][, r2.baseyr := (t1[[4]]-t1[[2]])
-  ][, r1.baseyr.per := round((r1.baseyr/t1[[2]])*100, 2)
-  ][, r2.baseyr.per := round((r2.baseyr/t1[[2]])*100, 2)
-  ][, r1.avgann := round(((t1[[3]]/t1[[2]])^(1/(as.numeric(sel.yr.fl[2])-as.numeric(sel.yr.fl[1])))-1)*100, 2)
-  ][, r2.avgann := round(((t1[[4]]/t1[[2]])^(1/(as.numeric(sel.yr.fl[2])-as.numeric(sel.yr.fl[1])))-1)*100, 2)]
-  setnames(t1, colnames(t1), c(idname,
-                               paste0(sel.yr.fl[1], "_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", runs[2]),
-                               "Change",
-                               "Per.Change",
-                               "Per.Growth",
-                               "r1.baseyr",
-                               "r2.baseyr",
-                               "r1.baseyr.per",
-                               "r2.baseyr.per",
-                               "r1.avgann",
-                               "r2.avgann"))
-  t1[, `:=` (r1dist = round(r1.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r1.baseyr)])[[1]])*100, 2), 
-             r2dist = round(r2.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r2.baseyr)])[[1]])*100, 2))
-  ][, `:=` (distdiff = round(r1dist - r2dist, 2))]
+  # add target (future) year
+  cols <- c("County", "indicator", "run", target.year.col)
+  table_f <- table[, ..cols]
+  tbl <- merge(table_mg, table_f, by = c("County", "indicator", "run"))
+  
+  tbl[, run := get_trim_runnames(run)]
+  
+  t1 <- dcast.data.table(tbl, paste(idname, "~ run"), value.var = c("base", target.year.col))
+  
+  # column names
+  base_run1 <- paste0("base_", get_trim_runnames(runs[1]))
+  base_run2 <- paste0("base_", get_trim_runnames(runs[2]))
+  target_run1 <- paste0(target.year.col, "_", get_trim_runnames(runs[1]))
+  target_run2 <- paste0(target.year.col, "_", get_trim_runnames(runs[2]))
+  
+  baseyear_run1 <- str_extract(unique(table_mg[run %like% runs[1]][, base_year]), "\\d+")
+  baseyear_run2 <- str_extract(unique(table_mg[run %like% runs[2]][, base_year]), "\\d+")
+  target_year <- str_extract(target.year.col, "\\d+")
+  
+  setcolorder(t1, c(idname, base_run1, target_run1, base_run2, target_run2))
+  
+  t1[, Change := (t1[[target_run1]]-t1[[target_run2]])] # change in 2050(target years)
+  t1[, Per.Change := round((Change/t1[[target_run2]])*100, 2)] # change/2050 run2
+  t1[, r1.baseyr := (t1[[target_run1]]-t1[[base_run1]])] # run1 2050-baseyear (growth)
+  t1[, r2.baseyr := (t1[[target_run2]]-t1[[base_run2]])] # run2 2050-baseyear (growth)
+  t1[, r1.baseyr.per := round((r1.baseyr/t1[[base_run1]])*100, 2)] # run1/baseyear (growth %)
+  t1[, r2.baseyr.per := round((r2.baseyr/t1[[base_run2]])*100, 2)] # run2/baseyear (growth %)
+  t1[, r1.avgann := round(((t1[[target_run1]]/t1[[base_run1]])^(1/(as.numeric(target_year)-as.numeric(baseyear_run1)))-1)*100, 2)] # run1 2050/baseyear ^1/2050-baseyear
+  t1[, r2.avgann := round(((t1[[target_run2]]/t1[[base_run2]])^(1/(as.numeric(target_year)-as.numeric(baseyear_run2)))-1)*100, 2)] # run2 2050/baseyear ^1/2050-baseyear
+  t1[, `:=` (r1dist = round(r1.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r1.baseyr)])[[1]])*100, 2), # growth/regional growth percent
+             r2dist = round(r2.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r2.baseyr)])[[1]])*100, 2))] # growth/regional growth percent
+  t1[, `:=` (distdiff = round(r1dist - r2dist, 2))]
+  
   setcolorder(t1, c(idname,
-                    paste0(sel.yr.fl[1], "_", runs[1]),
-                    paste0(sel.yr.fl[2], "_", runs[1]),
-                    paste0(sel.yr.fl[2], "_", runs[2]),
+                    base_run1,
+                    target_run1,
+                    base_run2,
+                    target_run2,
                     "Change",
                     "Per.Change",
                     "r1dist",
                     "r2dist",
-                    "Per.Growth",
                     "r1.baseyr",
                     "r1.baseyr.per",
                     "r1.avgann",
@@ -53,38 +63,131 @@ create.tsTable <- function(table, idname, runs, tsyear, baseyear){ #idname aka '
                     "distdiff"
   ))
   
-  t1[, c(2:4, 10, 13) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:4, 10, 13)]
+  setnames(t1, c(target_run1, target_run2), str_extract(c(target_run1, target_run2), "(?<=yr).*"))
+  
+  t1[, c(2:6, 10, 13) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:6, 10, 13)]
+  
+  return(t1)
+  # runs <- get_runnames(runs) %>% get_trim_runnames()
+  # 
+  # sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
+  # sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
+  # table[, run := get_trim_runnames(run)]
+  # 
+  # t1 <- dcast.data.table(table, paste(idname, "~ run"), value.var = sel.yrs.col)
+  # 
+  # setcolorder(t1, c(idname, paste0(sel.yrs.col[1],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[1]), paste0(sel.yrs.col[2],"_",runs[2]), paste0(sel.yrs.col[1],"_",runs[2])))
+  # t1[, ncol(t1) := NULL]
+  # t1[, Change := (t1[[ncol(t1)-1]]-t1[[ncol(t1)]])
+  # ][, Per.Change := round((Change/t1[[4]])*100, 2)
+  # ][, Per.Growth := round(Change/(t1[[4]]-t1[[2]])*100, 2)
+  # ][, r1.baseyr := (t1[[3]]-t1[[2]])
+  # ][, r2.baseyr := (t1[[4]]-t1[[2]])
+  # ][, r1.baseyr.per := round((r1.baseyr/t1[[2]])*100, 2)
+  # ][, r2.baseyr.per := round((r2.baseyr/t1[[2]])*100, 2)
+  # ][, r1.avgann := round(((t1[[3]]/t1[[2]])^(1/(as.numeric(sel.yr.fl[2])-as.numeric(sel.yr.fl[1])))-1)*100, 2)
+  # ][, r2.avgann := round(((t1[[4]]/t1[[2]])^(1/(as.numeric(sel.yr.fl[2])-as.numeric(sel.yr.fl[1])))-1)*100, 2)]
+  # setnames(t1, colnames(t1), c(idname,
+  #                              paste0(sel.yr.fl[1], "_", runs[1]),
+  #                              paste0(sel.yr.fl[2], "_", runs[1]),
+  #                              paste0(sel.yr.fl[2], "_", runs[2]),
+  #                              "Change",
+  #                              "Per.Change",
+  #                              "Per.Growth",
+  #                              "r1.baseyr",
+  #                              "r2.baseyr",
+  #                              "r1.baseyr.per",
+  #                              "r2.baseyr.per",
+  #                              "r1.avgann",
+  #                              "r2.avgann"))
+  # t1[, `:=` (r1dist = round(r1.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r1.baseyr)])[[1]])*100, 2),
+  #            r2dist = round(r2.baseyr/(unlist(t1[like(get(eval(idname)), "Sub-Total"), .(r2.baseyr)])[[1]])*100, 2))
+  # ][, `:=` (distdiff = round(r1dist - r2dist, 2))]
+  # setcolorder(t1, c(idname,
+  #                   paste0(sel.yr.fl[1], "_", runs[1]),
+  #                   paste0(sel.yr.fl[2], "_", runs[1]),
+  #                   paste0(sel.yr.fl[2], "_", runs[2]),
+  #                   "Change",
+  #                   "Per.Change",
+  #                   "r1dist",
+  #                   "r2dist",
+  #                   "Per.Growth",
+  #                   "r1.baseyr",
+  #                   "r1.baseyr.per",
+  #                   "r1.avgann",
+  #                   "r2.baseyr",
+  #                   "r2.baseyr.per",
+  #                   "r2.avgann",
+  #                   "distdiff"
+  # ))
+  # 
+  # t1[, c(2:4, 10, 13) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:4, 10, 13)]
 }
 
-sketch.basic <- function(grpcol, year1, year2, run1, run2){
-  # Create basic table container
+sketch.basic <- function(grpcol, baseyear1, baseyear2, year2, run1, run2){
+  # Create basic table container (Need to include baseyear of run 1 & 2)
   
   htmltools::withTags(table(
-    class = 'display', 
+    class = 'display',
     thead(
       tr(
         th(rowspan = 3, grpcol),
-        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, year1),
+        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear1),
+        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear2),
         th(class = 'dt-center', colspan = 10, year2)
       ),
       tr(
-        th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'A'),
-        lapply(list('B'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('C = B-A', 'D = C/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
-        lapply(list('E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('F = E-A', 'G = F/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
-        lapply(list('H = B-E', 'I = H/E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
+        th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B1'),
+        th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B2'),
+        lapply(list('F1'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+        lapply(list('U = F1-B1', 'V = U/B1', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+        lapply(list('W = F2-B2', 'X = W/B2', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('Y = F1-F2', 'Z = Y/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
+
       ),
       tr(
         th(style="font-size:14px;", bgcolor='AliceBlue', run1),
-        th(style="font-size:14px;",run1),
+        th(style="font-size:14px;", bgcolor='AliceBlue', run2),
+        th(style="font-size:14px;", run1),
         lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
         th(style="font-size:14px;",run2),
         lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
         lapply(c('Change', '% Change'), function(x) th(style="font-size:14px;",x))
+
       )
     ) # end thead
   )) # end withTags/table
+  
+  
+# sketch.basic <- function(grpcol, year1, year2, run1, run2){
+  # Create basic table container  
+  # htmltools::withTags(table(
+  #   class = 'display', 
+  #   thead(
+  #     tr(
+  #       th(rowspan = 3, grpcol),
+  #       th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, year1),
+  #       th(class = 'dt-center', colspan = 10, year2)
+  #     ),
+  #     tr(
+  #       th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'A'),
+  #       lapply(list('B'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+  #       lapply(list('C = B-A', 'D = C/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+  #       lapply(list('E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
+  #       lapply(list('F = E-A', 'G = F/A', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+  #       lapply(list('H = B-E', 'I = H/E'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
+  #     ),
+  #     tr(
+  #       th(style="font-size:14px;", bgcolor='AliceBlue', run1),
+  #       th(style="font-size:14px;",run1),
+  #       lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
+  #       th(style="font-size:14px;",run2),
+  #       lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
+  #       lapply(c('Change', '% Change'), function(x) th(style="font-size:14px;",x))
+  #     )
+  #   ) # end thead
+  # )) # end withTags/table
 }
 
 create.DT.basic <- function(table, acontainer){
@@ -93,7 +196,7 @@ create.DT.basic <- function(table, acontainer){
   DT::datatable(table,
                 extensions = 'Buttons',
                 class = 'cell-border stripe',
-                options = list(columnDefs = list(list(className = 'dt-center', targets = 1:11), 
+                options = list(columnDefs = list(list(className = 'dt-center', targets = 1:12), 
                                                  list(width = '20%', targets = 0)),
                                dom = 'Bfrtip',
                                buttons = list('copy',
@@ -109,11 +212,11 @@ create.DT.basic <- function(table, acontainer){
   ) %>% 
     formatStyle(colnames(table)[(ncol(table)-1):(ncol(table))],
                 color = styleInterval(c(0), c('red', 'black'))) %>%
-    formatStyle(colnames(table)[2],
+    formatStyle(colnames(table)[2:3],
                 backgroundColor = 'AliceBlue') %>%
-    formatStyle(colnames(table)[4:6],
+    formatStyle(colnames(table)[5:7],
                 backgroundColor = 'LightGoldenRodYellow') %>%
-    formatStyle(colnames(table)[8:10],
+    formatStyle(colnames(table)[9:11],
                 backgroundColor = 'LightGoldenRodYellow')
 }
 

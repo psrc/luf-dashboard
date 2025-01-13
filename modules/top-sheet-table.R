@@ -18,20 +18,37 @@ dt_server <- function(id, dttable, aindicator, idname, runs, tsyear, baseyear, t
         h2(title)
     })
     
-    # gather basic run info  
+    # gather basic run info
     runs <- get_runnames(runs)
     runnames <- get_trim_runnames(runs)
-    sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-    sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
-    
+    # browser()
     # filter and create table; create a DT container
     d <- dttable[indicator == aindicator, ]
-    t1 <- create.tsTable(d, idname, runs, tsyear, baseyear) %>% select(1:3, 10:12, 4, 13:15, 5:6)
-    sketch <- sketch.basic(colnames(t1)[1],  sel.yr.fl[1], sel.yr.fl[2], runnames[1], runnames[2])
+    t1 <- create.tsTable(d, idname, runs, tsyear, baseyear) %>% select(1:2, 4, 3, 10:12, 5, 13:15, 6:7)
+    
+    b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+    b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+    # sketch.basic <- function(grpcol, baseyear1, baseyear2, year2, run1, run2)
+    sketch <- sketch.basic(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
     
     output$table <- renderDT({
       create.DT.basic(t1, sketch)
       })
+    
+    # # gather basic run info  
+    # runs <- get_runnames(runs)
+    # runnames <- get_trim_runnames(runs)
+    # sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
+    # sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
+    # 
+    # # filter and create table; create a DT container
+    # d <- dttable[indicator == aindicator, ]
+    # t1 <- create.tsTable(d, idname, runs, tsyear, baseyear) %>% select(1:3, 10:12, 4, 13:15, 5:6)
+    # sketch <- sketch.basic(colnames(t1)[1],  sel.yr.fl[1], sel.yr.fl[2], runnames[1], runnames[2])
+    # 
+    # output$table <- renderDT({
+    #   create.DT.basic(t1, sketch)
+    #   })
     
   })
 }
