@@ -21,14 +21,13 @@ dt_server <- function(id, dttable, aindicator, idname, runs, tsyear, baseyear, t
     # gather basic run info
     runs <- get_runnames(runs)
     runnames <- get_trim_runnames(runs)
-    # browser()
+
     # filter and create table; create a DT container
     d <- dttable[indicator == aindicator, ]
     t1 <- create.tsTable(d, idname, runs, tsyear, baseyear) %>% select(1:2, 4, 3, 10:12, 5, 13:15, 6:7)
     
     b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
     b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
-    # sketch.basic <- function(grpcol, baseyear1, baseyear2, year2, run1, run2)
     sketch <- sketch.basic(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
     
     output$table <- renderDT({
