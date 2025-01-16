@@ -138,7 +138,7 @@ create.DT.basic <- function(table, acontainer){
 }
 
 calc.cols.tsTable <- function(table, tsyear, runs, baseyear){
-  # Prepares generic series of calculation on Modellers topsheet
+  # Prepares generic series of calculation on topsheet
   
   cols <- colnames(table)[2:ncol(table)]
   setnames(table, cols, str_extract(cols, ".*(?=\\.)"))
@@ -171,51 +171,58 @@ calc.cols.tsTable <- function(table, tsyear, runs, baseyear){
 create.exp.tsTable <- function(table, runs, tsyear, baseyear){
   # Prepares expanded topsheet table for RGCs & Key Locations
   
-  runs <- get_runnames(runs) %>% get_trim_runnames()
-  
-  sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-  sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
+  runnames <- get_trim_runnames(runs)
 
-  setcolorder(table, 
+  b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+  b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+
+  setcolorder(table,
               c("Name",
-                paste0(sel.yrs.col[1], "_", "Population","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Population","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Population","_", runs[2]),
-                paste0(sel.yrs.col[1], "_", "Employment","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Employment","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Employment","_", runs[2]),
-                paste0(sel.yrs.col[1], "_", "Population","_", runs[2]),
-                paste0(sel.yrs.col[1], "_", "Employment","_", runs[2])))
-  table[, (ncol(table)-1):ncol(table) := NULL] 
+                paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
+                paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
+                paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
+                paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
+                
+                paste0(b1, "_", "Employment","_", runnames[1]),
+                paste0(b2, "_", "Employment","_", runnames[2]),
+                paste0(tsyear, "_", "Employment","_", runnames[1]),
+                paste0(tsyear, "_", "Employment","_", runnames[2])
+              ))
+
+  t1 <- table[, Pop.Change := (table[[4]]-table[[5]]) # target year change
+  ][, Pop.Per.Change := round((Pop.Change/table[[5]])*100, 2)
+  ][, Emp.Change := (table[[8]]-table[[9]])
+  ][, Emp.Per.Change := round((Emp.Change/table[[9]])*100, 2)]
   
-  t1 <- table[, Pop.Change := (table[[3]]-table[[4]])
-  ][, Pop.Per.Change := round((Pop.Change/table[[4]])*100, 2)
-  ][, Emp.Change := (table[[6]]-table[[7]])
-  ][, Emp.Per.Change := round((Emp.Change/table[[7]])*100, 2)]
   setcolorder(t1,
               c("Name",
-                paste0(sel.yrs.col[1], "_", "Population","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Population","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Population","_", runs[2]),
+                paste0(b1, "_", "Population","_", runnames[1]),
+                paste0(b2, "_", "Population","_", runnames[2]),
+                paste0(tsyear, "_", "Population","_", runnames[1]),
+                paste0(tsyear, "_", "Population","_", runnames[2]),
                 "Pop.Change",
                 "Pop.Per.Change",
-                paste0(sel.yrs.col[1], "_", "Employment","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Employment","_", runs[1]),
-                paste0(sel.yrs.col[2], "_", "Employment","_", runs[2]),
+                paste0(b1, "_", "Employment","_", runnames[1]),
+                paste0(b2, "_", "Employment","_", runnames[2]),
+                paste0(tsyear, "_", "Employment","_", runnames[1]),
+                paste0(tsyear, "_", "Employment","_", runnames[2]),
                 "Emp.Change",
                 "Emp.Per.Change"))
+  
   setnames(t1, colnames(t1), c("Name",
-                               paste0(sel.yr.fl[1], "_", "Pop","_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", "Pop","_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", "Pop","_", runs[2]),
+                               paste0(b1, "_", "Pop","_", runnames[1]),
+                               paste0(b2, "_", "Pop","_", runnames[2]),
+                               paste0(tsyear, "_", "Pop","_", runnames[1]),
+                               paste0(tsyear, "_", "Pop","_", runnames[2]),
                                "Pop.Change",
                                "Pop.Per.Change",
-                               paste0(sel.yr.fl[1], "_", "Emp","_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", "Emp","_", runs[1]),
-                               paste0(sel.yr.fl[2], "_", "Emp","_", runs[2]),
+                               paste0(b1, "_", "Emp","_", runnames[1]),
+                               paste0(b2, "_", "Emp","_", runnames[2]),
+                               paste0(tsyear, "_", "Emp","_", runnames[1]),
+                               paste0(tsyear, "_", "Emp","_", runnames[2]),
                                "Emp.Change",
                                "Emp.Per.Change"))
-  t1[, c(2:4,7:9) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:4,7:9)]
+  t1[, c(2:6,8:12) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:6,8:12)]
 }
 
 
@@ -225,7 +232,7 @@ create.DT.expanded <- function(table, acontainer){
   DT::datatable(table,
                 extensions = 'Buttons',
                 class = 'cell-border stripe',
-                options = list(columnDefs = list(list(className = 'dt-center', targets = 1:10),
+                options = list(columnDefs = list(list(className = 'dt-center', targets = 1:12),
                                                  list(width = '20%', targets = 0)),
                                dom = 'Bfrtip',
                                buttons = list('copy',
@@ -238,33 +245,34 @@ create.DT.expanded <- function(table, acontainer){
                 container = acontainer, 
                 rownames = FALSE
   ) %>% 
-    formatStyle(colnames(table)[c(5:6, (ncol(table)-1):(ncol(table)))],
+    formatStyle(colnames(table)[c(6:7, (ncol(table)-1):(ncol(table)))],
                 color = styleInterval(c(0), c('red', 'black'))) %>%
-    formatStyle(colnames(table)[c(2,7)],
+    formatStyle(colnames(table)[c(2,3,8,9)],
                 backgroundColor = 'AliceBlue')
 }
 
-# Create expanded table container
-sketch.expanded <- function(grpcol, year1, year2, run1, run2){
+sketch.expanded <- function(grpcol, baseyear1, baseyear2, year2, run1, run2){
+  # Create expanded table container
   htmltools::withTags(table(
     class = 'display',
     thead(
       tr(
         th(rowspan = 4, grpcol),
-        th(colspan = 5, 'Population'),
-        th(colspan = 5, 'Employment')
+        th(colspan = 6, 'Population'),
+        th(colspan = 6, 'Employment')
       ),
       tr(
-        rep(list(th(bgcolor='AliceBlue', colspan = 1, year1), th(colspan = 4, year2)), 2)
+        rep(list(th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear1), th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear2), th(class = 'dt-center', colspan = 4, year2)), 2)
       ),
       tr(
         rep(
-          list(th(style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'A'),
-               lapply(list('B', 'C', 'D = B-C', 'D/C'), function(x) th(style="font-size:12px; font-style:italic; font-weight:normal;", x))),
+          list(th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B1'),
+               th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B2'),
+               lapply(list('F1', 'F2', 'U = F1-F2', 'U/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))),
           2)
       ),
       tr(
-        rep(list(th(bgcolor='AliceBlue', run1), lapply(c(run1, run2, 'Change', '% Change'), th)), 2)
+        rep(list(th(bgcolor='AliceBlue', run1), th(bgcolor='AliceBlue', run2), lapply(c(run1, run2, 'Change', '% Change'), th)), 2)
       )
     ) # end thead
   )) # end withTags/table

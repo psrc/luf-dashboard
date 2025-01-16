@@ -30,8 +30,6 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
       # gather basic run info  
       runs <- get_runnames(runs)
       runnames <- get_trim_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
       
       # initialize growctr.table
       ctr.dt <- data.frame(matrix(ncol = length(years) + 3, nrow = 0)) #30
@@ -70,12 +68,20 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
       growctrdt <- growctrdt()
 
       runs <- get_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
       
-      t <- growctrdt[(indicator == 'Total Population' | indicator == 'Employment') & (run %in% runs)]
-      t[indicator == 'Total Population', indicator := 'Population']
-      t1 <- t[, lapply(.SD, sum), by = list(name, indicator, run), .SDcols = sel.yrs.col]
+      b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+      b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+      cols <- paste0("yr", c(b1, b2, tsyear))
+      
+      t <- growctrdt[(indicator == 'Total Population' | indicator == 'Employment')
+                     ][indicator == 'Total Population', indicator := 'Population']
+      
+      tm <- melt.data.table(t,
+                            id.vars = c("name", "indicator", "run"),
+                            measure.vars = str_subset(colnames(t), "^yr.*"),
+                            variable.name = "year")
+      tm[, year := str_extract(year, "\\d+")]
+      t1 <- tm[((run %in% runs[1]) & (year %in% c(b1, tsyear))) | ((run %in% runs[2]) & (year %in% c(b2, tsyear)))]
     })
     
     output$table_a <- renderDT({
@@ -86,18 +92,18 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
       
       runs <- get_runnames(runs)
       runnames <- get_trim_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
-      
+
+      b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+      b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+      cols <- paste0("yr", c(b1, b2, tsyear))
       lg.rgc <- c("Bellevue", "Everett", "SeaTac", "Seattle Downtown", "Seattle First Hill/Capitol Hill", "Seattle South Lake Union",
                   "Seattle University Community", "Tacoma Downtown")
       
-      t0 <- dcast.data.table(tsGrowthCtr, name ~ indicator + run, value.var = sel.yrs.col)
+      t0 <- dcast.data.table(tsGrowthCtr, name ~ year + indicator + run, value.var = "value")
       t <- t0[name %in% lg.rgc,]
       setnames(t, "name", "Name")
       t1 <- create.exp.tsTable(t, runs, tsyear, baseyear)
-      
-      sketch <- sketch.expanded(colnames(t1)[1], sel.yr.fl[1], sel.yr.fl[2], runnames[1], runnames[2])
+      sketch <- sketch.expanded(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
       create.DT.expanded(t1, sketch)
     })
     
@@ -109,20 +115,20 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
 
       runs <- get_runnames(runs)
       runnames <- get_trim_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
-
+      
+      b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+      b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+      cols <- paste0("yr", c(b1, b2, tsyear))
       rgclu <- copy(setDT(rgc.lookup))
 
       # identify names of mics from growth_center lu and store in vector
       mics <- rgclu[growth_center_id >= 600][, name := as.character(name)][['name']]
-      t0 <- dcast.data.table(tsGrowthCtr, name ~ indicator + run, value.var = sel.yrs.col)
+      t0 <- dcast.data.table(tsGrowthCtr, name ~ year + indicator + run, value.var = "value")
       t <- t0[name %in% mics,]
       setnames(t, "name", "Name")
 
       t1 <- create.exp.tsTable(t, runs, tsyear, baseyear)
-
-      sketch <- sketch.expanded(colnames(t1)[1], sel.yr.fl[1], sel.yr.fl[2], runnames[1], runnames[2])
+      sketch <- sketch.expanded(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
       create.DT.expanded(t1, sketch)
     })
     
