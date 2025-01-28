@@ -78,27 +78,27 @@ sketch.basic <- function(grpcol, baseyear1, baseyear2, year2, run1, run2){
     thead(
       tr(
         th(rowspan = 3, grpcol),
-        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear1),
-        th(class = 'dt-center', bgcolor='AliceBlue', colspan = 1, baseyear2),
+        th(class = 'dt-center', colspan = 1, baseyear1),
+        th(class = 'dt-center', colspan = 1, baseyear2),
         th(class = 'dt-center', colspan = 10, year2)
       ),
       tr(
         th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B1'),
         th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B2'),
         lapply(list('F1'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('U = F1-B1', 'V = U/B1', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('F1-B1', '(F1-B1)/B1', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
         lapply(list('F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x)),
-        lapply(list('W = F2-B2', 'X = W/B2', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
-        lapply(list('Y = F1-F2', 'Z = Y/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
+        lapply(list('F2-B2', '(F2-B2)/B2', ''), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='LightGoldenRodYellow', x)),
+        lapply(list('F1-F2', '(F1-F2)/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))
 
       ),
       tr(
         th(style="font-size:14px;", bgcolor='AliceBlue', run1),
         th(style="font-size:14px;", bgcolor='AliceBlue', run2),
         th(style="font-size:14px;", run1),
-        lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
+        lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;", bgcolor='LightGoldenRodYellow', x)),
         th(style="font-size:14px;",run2),
-        lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;",bgcolor='LightGoldenRodYellow', x)),
+        lapply(c('Growth', '% Growth', '% AvgAnn'), function(x) th(style="font-size:14px;", bgcolor='LightGoldenRodYellow', x)),
         lapply(c('Change', '% Change'), function(x) th(style="font-size:14px;",x))
 
       )
@@ -110,6 +110,13 @@ sketch.basic <- function(grpcol, baseyear1, baseyear2, year2, run1, run2){
 create.DT.basic <- function(table, acontainer){
   # Create a basic DT
   
+  headerCallback <- "function( thead, data, start, end, display ) {
+  $(thead).closest('thead').find('th').eq(1).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(2).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(3).css('background-color', 'LightGoldenRodYellow');
+  }
+  "
+  
   DT::datatable(table,
                 extensions = 'Buttons',
                 class = 'cell-border stripe',
@@ -120,6 +127,7 @@ create.DT.basic <- function(table, acontainer){
                                               list(extend = 'excel',
                                                    buttons = 'excel',
                                                    filename = 'LUFDashboard')),
+                               headerCallback = JS(headerCallback),
                                #autoWidth = TRUE,
                                paging = FALSE, 
                                searching = FALSE 
@@ -228,6 +236,15 @@ create.exp.tsTable <- function(table, runs, tsyear, baseyear){
 
 create.DT.expanded <- function(table, acontainer){
   # Create an expanded DT
+  headerCallback <- "function( thead, data, start, end, display ) {
+  $(thead).closest('thead').find('th').eq(3).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(4).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(5).css('background-color', 'LightGoldenRodYellow');
+  $(thead).closest('thead').find('th').eq(6).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(7).css('background-color', 'AliceBlue');
+  $(thead).closest('thead').find('th').eq(8).css('background-color', 'LightGoldenRodYellow');
+  }
+  "
   
   DT::datatable(table,
                 extensions = 'Buttons',
@@ -239,6 +256,7 @@ create.DT.expanded <- function(table, acontainer){
                                               list(extend = 'excel',
                                                    buttons = 'excel',
                                                    filename = 'LUFDashboard')),
+                               headerCallback = JS(headerCallback),
                                paging = FALSE, 
                                searching = FALSE 
                 ),
