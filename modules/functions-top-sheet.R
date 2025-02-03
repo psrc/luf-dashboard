@@ -286,7 +286,7 @@ sketch.expanded <- function(grpcol, baseyear1, baseyear2, year2, run1, run2){
         rep(
           list(th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B1'),
                th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", bgcolor='AliceBlue', 'B2'),
-               lapply(list('F1', 'F2', 'U = F1-F2', 'U/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))),
+               lapply(list('F1', 'F2', 'F1-F2', '(F1-F2)/F2'), function(x) th(class = 'dt-center', style="font-size:12px; font-style:italic; font-weight:normal;", x))),
           2)
       ),
       tr(
