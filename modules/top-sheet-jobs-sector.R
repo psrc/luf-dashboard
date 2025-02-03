@@ -24,11 +24,9 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       # gather basic run info  
       runs <- get_runnames(runs)
       runnames <- get_trim_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
       
       pat <- "city__dataset_table__employment_by_aggr_sector__\\d+"
-      
+
       # tabulate for luv years
       jobs.dt <- NULL
       for (r in 1:length(runnames)) {
@@ -75,10 +73,11 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       
       jobsectdt <- jobsectdt()
       runs <- get_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
 
-      t <- jobsectdt[(run %in% runs) & (year %in% sel.yr.fl)]
+      b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+      b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+      
+      t <- jobsectdt[((run %in% runs[1]) & (year %in% c(b1, tsyear))) | ((run %in% runs[2]) & (year %in% c(b2, tsyear)))]  
       t.sum <- t[, .(estimate = sum(estimate)), by = list(run, year)][, sector := "Sub-Total: Jobs"]
       rbindlist(list(t, t.sum), use.names = TRUE)
     })
@@ -90,29 +89,31 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       tsSectorJobs <- tsSectorJobs()
       runs <- get_runnames(runs)
       runnames <- get_trim_runnames(runs)
-      sel.yrs.col <- c(unique(baseyear$baseyear), paste0("yr", tsyear))
-      sel.yr.fl <- str_extract(sel.yrs.col, "\\d+")
+
+      b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
+      b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
    
       t <- dcast.data.table(tsSectorJobs, sector ~ year + run, value.var = "estimate")
       setnames(t, "sector", "Sector")
-      setcolorder(t, c("Sector", paste0(sel.yr.fl[1],"_",runs[1]), paste0(sel.yr.fl[2],"_",runs[1]), paste0(sel.yr.fl[2],"_",runs[2]), paste0(sel.yr.fl[1],"_",runs[2])))
-      t[, ncol(t) := NULL]
+    
+      t <- calc.cols.tsTable(t, tsyear, runs, baseyear)
 
-      t <- calc.cols.tsTable(t, sel.yr.fl)
       setcolorder(t, c("Sector",
-                       paste0(sel.yr.fl[1], "_", runs[1]),
-                       paste0(sel.yr.fl[2], "_", runs[1]),
+                       paste0(b1, "_", runnames[1]),
+                       paste0(b2, "_", runnames[2]),
+                       paste0(tsyear, "_", runnames[1]),
                        "r1.baseyr",
                        "r1.baseyr.per",
                        "r1.avgann",
-                       paste0(sel.yr.fl[2], "_", runs[2]),
+                       paste0(tsyear, "_", runnames[2]),
                        "r2.baseyr",
                        "r2.baseyr.per",
                        "r2.avgann",
                        "Change",
                        "Per.Change"))
-      t1 <- t[, c(2:4, 7:8) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:4, 7:8)]
-      sketch <- sketch.basic(colnames(t1)[1], sel.yr.fl[1], sel.yr.fl[2], runnames[1], runnames[2])
+      t1 <- t[, c(2:5, 8:9, 12) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:5, 8:9, 12)]
+      
+      sketch <- sketch.basic(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
       create.DT.basic(t1, sketch)
     })
 
