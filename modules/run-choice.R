@@ -24,7 +24,9 @@ run_choice_ui <- function(id, si_label, btn_label, multi) {
 run_choice_server <- function(id, root_dir) {
   moduleServer(id, function(input, output, session) {
     
-    volumes <- c(Home = root_dir, "R Installation" = R.home(), getVolumes()())
+    volumes <- c(Home = root_dir, "R Installation" = R.home(), getVolumes()()
+                 #, Runs = "~/n$/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs/awsmodel04"
+                )
     shinyDirChoose(input, 'directory', roots = volumes, session = session, restrictions = system.file(package = "base"), allowDirCreate = FALSE)
     
     r <- reactiveValues(runs = c()) # store selected runs

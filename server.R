@@ -208,8 +208,12 @@ server <- function(input, output, session) {
     for (r in 1:length(runs)) {
       for (a in 1:length(geography)){
         for (i in 1:length(attribute)){
-          filename <- paste0(geography[a],'__',"table",'__',attribute[i], '.csv')
-          dt <- read.csv(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
+          basefilename <- paste0(geography[a],'__',"table",'__',attribute[i])
+          if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
+            filename <- paste0(basefilename, 'An.csv') # use annual indicator if available
+          else filename <- paste0(basefilename, '.csv')
+          #dt <- read.csv(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
+          dt <- fread(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
           colnames(dt)[2: ncol(dt)] <- str_replace(colnames(dt)[2: ncol(dt)], '\\w+_', 'yr') # rename columns
           colnames(dt)[1] <- str_replace(colnames(dt)[1], '\\w+_', 'name_')
           dt$indicator <- switch(attribute[i],
@@ -221,7 +225,7 @@ server <- function(input, output, session) {
           dt$geography <- geography[a]
           dt$run <- names(runs)[r]
           # dt$run <- runnames[r]
-          setDT(dt)
+          #setDT(dt)
           df <- rbindlist(list(df, dt), use.names = TRUE, fill = TRUE)
         } # end of attribute loop
       } # end of geography loop
