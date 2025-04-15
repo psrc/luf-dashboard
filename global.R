@@ -23,7 +23,7 @@ faz.lookup <- fread(file.path('data', "faz_names.txt"))
 zone.lookup <- fread(file.path('data', "zones.txt"))
 splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
-# OLD.ctrlhct.lookup <- fread(file.path('data','control_hct_old.csv'))
+ctrlhct.lookup <- fread(file.path('data','control_hcts.csv'))
 ctrl.lookup <- fread(file.path('data','controls.csv')) # varname should be "controls" formerly ctrlhct
 city.lookup <- fread(file.path('data', "cities18.csv"))
 

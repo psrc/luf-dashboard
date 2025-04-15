@@ -119,6 +119,7 @@ server <- function(input, output, session) {
                            go = input$`ts-go`, 
                            alldata = alldt(), 
                            ctrldata = ctrldt(),
+                           ctrlhctdata = ctrlhctdt(),
                            cities_an_data = cities_an_dt(),
                            paths = paths()
     )
@@ -237,7 +238,7 @@ server <- function(input, output, session) {
   })
   
   ctrldt <- eventReactive(input$`runChoice_multi-go`,{
-    # build control HCT source table
+    # build control source table
     
     # extract runs from abs paths
     runs <- paths()
@@ -265,6 +266,39 @@ server <- function(input, output, session) {
                            indicator == "employment", "Employment",
                            indicator == "residential_units", "Residential Units")]
     setnames(d, 'control_id', 'name_id')
+    return(d)
+    
+  })
+  
+  ctrlhctdt <- eventReactive(input$`runChoice_multi-go`,{
+    # build control HCT source table
+    
+    # extract runs from abs paths
+    runs <- paths()
+    attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
+    
+    d <- NULL
+    
+    for (r in 1:length(runs)) {
+      for (i in 1:length(attribute)){
+        filename <- paste0('control_hct__',"table",'__',attribute[i], 'An.csv')
+        
+        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+        dt <- melt(dt, id.vars = 'control_hct_id', variable.name = 'indicator', value.name = 'estimate')
+        dt[, run := names(runs)[r]]
+        
+        ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
+      }
+    }
+    
+    d[, `:=`(year = str_extract(indicator, "\\d+"),
+             indicator = str_extract(indicator, '\\w+(?=A)'),
+             geography = 'Control HCT')]
+    d[, indicator := fcase(indicator == "population", "Total Population",
+                           indicator == "households", "Households",
+                           indicator == "employment", "Employment",
+                           indicator == "residential_units", "Residential Units")]
+    setnames(d, 'control_hct_id', 'name_id')
     return(d)
     
   })

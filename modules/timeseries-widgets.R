@@ -44,6 +44,7 @@ timeseries_widgets_ui <- function(id) {
                   label = 'Geography',
                   choices = c('County & Region' = 'county', 
                               'Control' = 'control',  
+                              'Control HCT' = 'control_hct',
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
       
@@ -64,7 +65,7 @@ timeseries_widgets_ui <- function(id) {
       ), # end conditional panel
       # conditional panel for Control
       conditionalPanel(
-        condition = "input.geog == 'control' ",
+        condition = "input.geog %in% c('control', 'control_hct') ",
         ns = ns,
         div(class = 'notes', 'View Controls within a FAZ Large Area'),
         selectInput(ns('largeAreaHct'),
