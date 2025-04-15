@@ -248,8 +248,10 @@ server <- function(input, output, session) {
 
     for (r in 1:length(runs)) {
       for (i in 1:length(attribute)){
-        filename <- paste0('control__',"table",'__',attribute[i], 'An.csv')
-        
+        basefilename <- paste0('control__',"table",'__',attribute[i])
+        if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
+          filename <- paste0(basefilename, 'An.csv')
+        else filename <- paste0(basefilename, '.csv')
         dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
         dt <- melt(dt, id.vars = 'control_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
@@ -281,8 +283,10 @@ server <- function(input, output, session) {
     
     for (r in 1:length(runs)) {
       for (i in 1:length(attribute)){
-        filename <- paste0('control_hct__',"table",'__',attribute[i], 'An.csv')
-        
+        basefilename <- paste0('control_hct__',"table",'__',attribute[i])
+        if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
+          filename <- paste0(basefilename, 'An.csv')
+        else filename <- paste0(basefilename, '.csv')
         dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
         dt <- melt(dt, id.vars = 'control_hct_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
