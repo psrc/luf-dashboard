@@ -10,13 +10,13 @@ library(data.table)
 library(tidyverse)
 library(psrcelmer)
 
-# rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
-#rund <- '~/n$/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs'
+#rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
 rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
 attribute <- c("population", "households","employment", "residential_units")
 geography <- c( "zone", "faz", "city")
 years <- seq(2014, 2050)
+limited.years <- sort(setdiff(c(2014, seq(2015, 2050, by = 5), 2044), 2045))
 
 # lookups
 faz.lookup <- fread(file.path('data', "faz_names.txt"))

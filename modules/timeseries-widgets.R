@@ -47,7 +47,6 @@ timeseries_widgets_ui <- function(id) {
                               'Control HCT' = 'control_hct',
                               'Cities' = 'cities', 
                               'FAZ' = 'Faz')),
-      
       # conditional panel for cities
       conditionalPanel(
         condition = "input.geog == 'cities'",
@@ -57,15 +56,10 @@ timeseries_widgets_ui <- function(id) {
                     label = 'FAZ Large Area Groups',
                     choices = faz_lg_areas
         ),
-        radioButtons(ns('citiesYears'),
-                     label = 'Display Years',
-                     choices = c('Limited', 'All'),
-                     inline = TRUE
-        )
       ), # end conditional panel
       # conditional panel for Control
       conditionalPanel(
-        condition = "input.geog %in% c('control', 'control_hct') ",
+        condition = "input.geog == 'control' || input.geog == 'control_hct'",
         ns = ns,
         div(class = 'notes', 'View Controls within a FAZ Large Area'),
         selectInput(ns('largeAreaHct'),
@@ -83,6 +77,11 @@ timeseries_widgets_ui <- function(id) {
                     choices = faz_lg_areas_long
         )
       ), # end conditional panel
+      radioButtons(ns('years'),
+                   label = 'Display Years',
+                   choices = c('Limited', 'All'),
+                   inline = TRUE
+      ),
       actionButton(ns('go'),
                    label = 'Enter')
     ) # end wellPanel

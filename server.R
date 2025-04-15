@@ -112,7 +112,7 @@ server <- function(input, output, session) {
     timeseries_plot_server('tsContent', 
                            runs = input$`ts-runs`,
                            geog = input$`ts-geog`,
-                           cityyears = input$`ts-citiesYears`,
+                           tsyears = input$`ts-years`,
                            largearea = input$`ts-largeArea`,
                            largeareahct = input$`ts-largeAreaHct`,
                            largeareafaz = input$`ts-largeAreaFaz`,
@@ -120,7 +120,7 @@ server <- function(input, output, session) {
                            alldata = alldt(), 
                            ctrldata = ctrldt(),
                            ctrlhctdata = ctrlhctdt(),
-                           cities_an_data = cities_an_dt(),
+                           #cities_an_data = cities_an_dt(),
                            paths = paths()
     )
   })
@@ -242,7 +242,7 @@ server <- function(input, output, session) {
     
     # extract runs from abs paths
     runs <- paths()
-    attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
+    #attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
     
     d <- NULL
 
@@ -258,7 +258,7 @@ server <- function(input, output, session) {
       }
     }
     
-    d[, `:=`(year = str_extract(indicator, "\\d+"),
+    d[, `:=`(year = as.integer(str_extract(indicator, "\\d+")),
              indicator = str_extract(indicator, '\\w+(?=A)'),
              geography = 'Control')]
     d[, indicator := fcase(indicator == "population", "Total Population",
@@ -275,7 +275,7 @@ server <- function(input, output, session) {
     
     # extract runs from abs paths
     runs <- paths()
-    attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
+    #attribute <- attribute[attribute != 'residential_units'] # res units doesn't exist yet
     
     d <- NULL
     
@@ -291,7 +291,7 @@ server <- function(input, output, session) {
       }
     }
     
-    d[, `:=`(year = str_extract(indicator, "\\d+"),
+    d[, `:=`(year = as.integer(str_extract(indicator, "\\d+")),
              indicator = str_extract(indicator, '\\w+(?=A)'),
              geography = 'Control HCT')]
     d[, indicator := fcase(indicator == "population", "Total Population",
@@ -303,27 +303,27 @@ server <- function(input, output, session) {
     
   })
   
-  cities_an_dt <- eventReactive(input$`runChoice_multi-go`,{
-    # build annual cities source table
-    
-    # extract runs from abs paths
-    runs <- paths()
-    
-    d <- NULL
-    
-    for (r in 1:length(runs)) {
-      for (i in 1:length(attribute)){
-        filename <- paste0('city__',"table",'__',attribute[i], 'An.csv')
-        
-        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
-        dt <- melt(dt, id.vars = 'city_id', variable.name = 'indicator', value.name = 'estimate')
-        dt[, run := names(runs)[r]]
-        ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
-      }
-    }
-    
-    d[, `:=`(year = str_extract(indicator, "\\d+"),
-             indicator = str_extract(indicator, '\\w+(?=A)'))]
-  })
+  # cities_an_dt <- eventReactive(input$`runChoice_multi-go`,{
+  #   # build annual cities source table
+  #   
+  #   # extract runs from abs paths
+  #   runs <- paths()
+  #   
+  #   d <- NULL
+  #   
+  #   for (r in 1:length(runs)) {
+  #     for (i in 1:length(attribute)){
+  #       filename <- paste0('city__',"table",'__',attribute[i], 'An.csv')
+  #       
+  #       dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+  #       dt <- melt(dt, id.vars = 'city_id', variable.name = 'indicator', value.name = 'estimate')
+  #       dt[, run := names(runs)[r]]
+  #       ifelse(is.null(dt), d <- dt, d <- rbindlist(list(d, dt)))
+  #     }
+  #   }
+  #   
+  #   d[, `:=`(year = str_extract(indicator, "\\d+"),
+  #            indicator = str_extract(indicator, '\\w+(?=A)'))]
+  # })
 
 }

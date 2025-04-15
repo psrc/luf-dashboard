@@ -9,8 +9,8 @@ timeseries_plot_ui <- function(id) {
   
 }
 
-timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largeareahct, largeareafaz, go, alldata, 
-                                   ctrldata, ctrlhctdata, cities_an_data, paths) {
+timeseries_plot_server <- function(id, runs, geog, tsyears, largearea, largeareahct, largeareafaz, go, alldata, 
+                                   ctrldata, ctrlhctdata, paths) {
   moduleServer(id, function(input, output, session) {
     
     table <- eventReactive(go, {
@@ -27,9 +27,11 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
       a[, year := as.integer(str_extract(year, "\\d+"))]
 
       # alldata contains years with no estimates, filter out for cleaner graph
+      a <- a[run %in% runnames]
       y <- unique(a[estimate != 0, .(year)])
       y <- y[['year']]
-      a <- a[year %in% y & run %in% runnames, ]
+      a <- a[year %in% y, ]
+      if(tsyears == "Limited") a <- a[year %in% limited.years]
       
       ## County/Region ----
       if(geog == 'county') {
@@ -48,6 +50,7 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
       ## Control ----  
         ch <- ctrldata
         ch <- ch[run %in% runnames, ]
+        if(tsyears == "Limited") ch <- ch[year %in% limited.years]
         # merge with lookup table
         t <- merge(ch, ctrl.lookup[, .(control_id, control_name, lgarea_group)], by.x = 'name_id', by.y = 'control_id')
         setnames(t, c('control_name'), c('name'))
@@ -57,6 +60,7 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
         ## Control HCT ----  
         ch <- ctrlhctdata
         ch <- ch[run %in% runnames, ]
+        if(tsyears == "Limited") ch <- ch[year %in% limited.years]
         # merge with lookup table
         t <- merge(ch, ctrlhct.lookup[, .(control_hct_id, control_hct_name, lgarea_group)], by.x = 'name_id', by.y = 'control_hct_id')
         setnames(t, c('control_hct_name'), c('name'))
@@ -64,18 +68,18 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
         
       } else if(geog == 'cities') {
       ## Cities ----
-        if(cityyears == 'All') {
-          a_city <- cities_an_data
-          
-          # merge with lookup table
-          t <- merge(a_city, city.lookup, by = 'city_id')
-        } else {
+        # if(cityyears == 'All') {
+        #   a_city <- cities_an_data
+        #   
+        #   # merge with lookup table
+        #   t <- merge(a_city, city.lookup, by = 'city_id')
+        # } else {
           a_city <- a[geography == 'city']
           
           # merge with lookup table
           t <- merge(a_city, city.lookup, by.x = 'name_id', by.y = 'city_id')
           
-        }
+        #}
         setnames(t, c('city_name'), c('name'))
         t <- t[lgarea_group == largearea]
 
@@ -120,11 +124,11 @@ timeseries_plot_server <- function(id, runs, geog, cityyears, largearea, largear
               legend.title = element_blank(),
               axis.text.x = element_text(size = 8, hjust = 1),
               text = element_text(family="Poppins"))
-      
-      if(geog == 'control' | cityyears == 'All') {
-       g <- g +
-          scale_x_discrete(breaks = seq(2015, 2050, by = 5))
-      }
+      #if(geog == 'control') browser()
+      #if(geog == 'control' | tsyears == 'All') {
+      # g <- g +
+      #    scale_x_discrete(breaks = intersect(seq(2015, 2050, by = 5), unique(t$year)))
+      #}
       
       ggplotly(g, width = ggplotly_w, height = ggplotly_h)
     })
