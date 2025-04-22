@@ -59,7 +59,7 @@ timeseries_widgets_ui <- function(id) {
       ), # end conditional panel
       # conditional panel for Control
       conditionalPanel(
-        condition = "input.geog == 'control' || input.geog == 'control_hct'",
+        condition = "input.geog == 'control'",
         ns = ns,
         div(class = 'notes', 'View Controls within a FAZ Large Area'),
         selectInput(ns('largeAreaHct'),
@@ -69,7 +69,7 @@ timeseries_widgets_ui <- function(id) {
       ), # end conditional panel
       # conditional panel for FAZ
       conditionalPanel(
-        condition = "input.geog == 'Faz'",
+        condition = "input.geog == 'Faz' || input.geog == 'control_hct'",
         ns = ns,
         div(class = 'notes', 'View FAZs within a FAZ Large Area'),
         selectInput(ns('largeAreaFaz'),

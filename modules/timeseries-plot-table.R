@@ -64,7 +64,7 @@ timeseries_plot_server <- function(id, runs, geog, tsyears, largearea, largearea
         # merge with lookup table
         t <- merge(ch, ctrlhct.lookup[, .(control_hct_id, control_hct_name, lgarea_group)], by.x = 'name_id', by.y = 'control_hct_id')
         setnames(t, c('control_hct_name'), c('name'))
-        t <- t[lgarea_group == largeareahct]
+        t <- t[lgarea_group == largeareafaz]
         
       } else if(geog == 'cities') {
       ## Cities ----
@@ -98,12 +98,12 @@ timeseries_plot_server <- function(id, runs, geog, tsyears, largearea, largearea
       t <- table()
       
       num_juris <- length(unique(t$name))
-      num_indic <- length(unique(t$indicator))
+      num_indic <- length(unique(t$indicator[!is.na(t$indicator)]))
       ggplotly_w <- 1400
       
       if(geog == 'county') {
         ggplotly_h <- 1200
-      } else if(geog %in% c('control', 'cities', 'Faz')) {
+      } else if(geog %in% c('control', 'control_hct', 'cities', 'Faz')) {
         if(num_juris <= 5) {
           ggplotly_h <- 925
         } else if(num_juris > 5 & num_juris <= 10){
