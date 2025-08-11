@@ -149,7 +149,9 @@ calc.cols.tsTable <- function(table, tsyear, runs, baseyear){
   # Prepares generic series of calculation on topsheet
   
   cols <- colnames(table)[2:ncol(table)]
-  setnames(table, cols, str_extract(cols, ".*(?=\\.)"))
+  cols_short <- str_extract(cols, ".*(?=\\.)")
+  cols_short[is.na(cols_short)] <- cols[is.na(cols_short)]
+  setnames(table, cols, cols_short)
   
   runnames <- get_trim_runnames(runs)
   # column names

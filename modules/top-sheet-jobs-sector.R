@@ -95,7 +95,6 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
    
       t <- dcast.data.table(tsSectorJobs, sector ~ year + run, value.var = "estimate")
       setnames(t, "sector", "Sector")
-    
       t <- calc.cols.tsTable(t, tsyear, runs, baseyear)
 
       setcolorder(t, c("Sector",
