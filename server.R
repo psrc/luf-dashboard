@@ -125,7 +125,30 @@ server <- function(input, output, session) {
     )
   })
   
- 
+  # Development Capacity ----
+  
+  observeEvent(input$`runChoice_multi-go`, {
+    # widgets
+    dev_cap_widgets_server('devCap', 
+                           paths = paths()#, 
+                           # capdt = capdt(), 
+                           # devdt = devdt()
+                           )
+
+  })
+  
+  observeEvent(input$`devCap-go`,{
+    dev_cap_server('devCapContent', 
+                   run = input$`devCap-run`, 
+                   geog = input$`devCap-geography`, 
+                   year = input$`devCap-year`, 
+                   go = input$`devCap-go`, 
+                   paths = paths(), 
+                   devdata = devdt(), 
+                   capdata = capdt()
+    )
+  })
+    
   # Data ----
   
   baseyears <- reactive({
@@ -193,13 +216,13 @@ server <- function(input, output, session) {
     return(dt2)
   })
   
+  ## alldt ----
   
   alldt <- eventReactive(input$`runChoice_multi-go`,{
     # build general attributes source table
     
     # extract runs from abs paths
     runs <- paths()
-    
     # initialize main table
     df <- data.frame(matrix(ncol = length(years) + 4, nrow = 0)) 
     df.colnames <- c("name_id", paste0("yr", years), "indicator", "geography", "run") 
@@ -305,6 +328,87 @@ server <- function(input, output, session) {
     setnames(d, 'control_hct_id', 'name_id')
     return(d)
     
+  })
+  
+  # Development Capacity tables ----
+  
+  capdt <- eventReactive(input$`runChoice_multi-go`, {
+    # extract runs from abs paths
+    runs <- paths()
+
+    cap.geography <- c(geography, "growth_center")
+    cap.type <- c("max_dev", "max_dev_nonresidential", "max_dev_residential")
+    
+    cap.table <- NULL
+    
+    for (r in 1:length(runs)){
+      cap.files <- as.list(list.files(file.path(runs[r], "indicators"), pattern = paste0("max_dev(_\\w+)*", ".csv")))
+      if (length(cap.files) >= 1){
+        for (g in 1:length(cap.geography)){
+          for (c in 1:length(cap.type)){
+            cap.tbl <- NULL
+            cap.file <- paste0(cap.geography[g], '__table__', cap.type[c], "_capacity", ".csv")
+            cap.tbl <- read.csv(file.path(runs[r],"indicators", cap.file), header = TRUE, sep = ",")
+            cap.tbl$captype <- switch(cap.type[c],
+                                      "max_dev" = "Total",
+                                      "max_dev_nonresidential" = "Non-Residential",
+                                      "max_dev_residential" = "Residential")
+            cap.tbl$geography <- cap.geography[g]
+            cap.tbl$year <- str_sub(names(cap.tbl)[2], -4)
+            cap.tbl$run <- runs[r]
+            colnames(cap.tbl)[1] <- "name_id"
+            colnames(cap.tbl)[2] <- "capacity"
+            ifelse(is.null(cap.table),
+                   cap.table <- cap.tbl,
+                   cap.table <- rbind(cap.table, cap.tbl))
+          } # end of cap.type loop
+        } # end of cap.geography loop
+      } else if (length(cap.files) < 1){
+        next
+      } # end conditional
+    } # end of runnames loop
+
+    return(as.data.table(cap.table))
+  })
+  
+  devdt <- eventReactive(input$`runChoice_multi-go`, {
+    # extract runs from abs paths
+    runs <- paths()
+
+    cap.geography <- c(geography, "growth_center")
+    dev.type <- c("residential_units", "building_sqft", "nonres_sqft")
+
+    dev.table <- NULL
+
+    for (r in 1:length(runs)){
+      dev.files <- as.list(list.files(file.path(runs[r], "indicators"), pattern = paste0("sqft", ".csv")))
+      if (length(dev.files) >= 1){
+        for (g in 1:length(cap.geography)){
+          for (d in 1:length(dev.type)){
+            dev.tbl <- NULL
+            dev.file <- paste0(cap.geography[g], '__table__', dev.type[d], ".csv")
+            dev.tbl <- fread(file.path(runs[r],"indicators", dev.file), header = TRUE)
+            dev.tbl.m <- melt(dev.tbl, id.vars = c(paste0(cap.geography[g], "_id")), measure.vars = names(dev.tbl)[2:ncol(dev.tbl)])
+            dev.tbl.m[, `:=` (devtype = switch(dev.type[d],
+                                               "residential_units" = "Residential Units",
+                                               "building_sqft" = "Building Sqft",
+                                               "nonres_sqft" = "Non-Residential Sqft"),
+                              year = str_sub(variable, -4),
+                              geography = cap.geography[g],
+                              run = runs[r])]
+            setnames(dev.tbl.m, paste0(cap.geography[g], "_id"), "name_id")
+            setnames(dev.tbl.m, "value", "estimate")
+            ifelse(is.null(dev.table),
+                   dev.table <- dev.tbl.m,
+                   dev.table <- rbind(dev.table, dev.tbl.m))
+          } # end of dev.type loop
+        } # end cap.geography loop
+      } else if (length(dev.files) < 1){
+        next
+      } # end conditional
+    } # end of runnames loop
+    
+    return(dev.table)
   })
   
   # cities_an_dt <- eventReactive(input$`runChoice_multi-go`,{
