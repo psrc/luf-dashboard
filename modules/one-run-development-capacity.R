@@ -5,7 +5,7 @@ dev_cap_ui <- function(id) {
   
   tagList(
     fluidPage(
-      fluidRow(
+      fluidRow(style = "margin: 1rem;",
         column(width = 4,
                leafletOutput(ns("total_map"), height = "800px")
         ), # end column
