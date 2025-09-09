@@ -32,11 +32,14 @@ city.lookup <- fread(file.path('data', "cities18.csv"))
 arc.root <- 'https://services6.arcgis.com/GWxg6t7KXELn1thE/arcgis/rest/services'
 zone.link <- 'Transportation_Analysis_Zones_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
 faz.link <- 'FAZ_2010/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
+centers.link <- 'Regional_Growth_Centers/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
 
 zone.shape <- st_read(file.path(arc.root, zone.link)) %>%
   mutate(name_id = taz)
 faz.shape <- st_read(file.path(arc.root, faz.link)) %>% 
   mutate(name_id = faz10)
+centers.shape <- st_read(file.path(arc.root, centers.link)) |> 
+  mutate(name_id = name)
 
 # names of layers in ElmerGeo
 cities.shape <- 'cities18_dashboard'

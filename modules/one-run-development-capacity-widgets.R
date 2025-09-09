@@ -61,21 +61,6 @@ dev_cap_widgets_server <- function(id, paths) {
     #               choices = select.runs)
     # })
     
-    # dcapRun <- reactive({
-    #   input$dcap_select_run
-    # })
-    
-    # dcapGeog <- reactive({
-    #   switch(as.integer(input$dcap_select_geography),
-    #          "zone",
-    #          "faz",
-    #          "city",
-    #          "growth_center")
-    # })
-    
-    # dcapYear <- reactive({
-    #   input$dcap_select_year
-    # })
     
   }) # end server
 }

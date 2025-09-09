@@ -84,6 +84,16 @@ map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitl
   }
 }
 
+map.basic.popup <- function(shapefile, xcolumn, ycolumn, layerctrl, xtitle, ytitle){
+  # Writes Leaflet popup text for development capacity shapes. Requires reactive shapefile, string x&y axis titles.
+  
+  paste0("<strong>ID: </strong>", shapefile$name_id,
+         "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
+         "<br><strong>", xtitle," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","),
+         "<br><strong>", ytitle," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
+         "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
+}
+
 map.layers <- function(shapefile, layerctrl, legendtitle, popupgeo, popupctr, mappalette){
   # Creates Leaflet baselayers. Requires reactive shapefile, string legend title.
   

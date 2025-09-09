@@ -141,11 +141,12 @@ server <- function(input, output, session) {
     dev_cap_server('devCapContent', 
                    run = input$`devCap-run`, 
                    geog = input$`devCap-geography`, 
-                   year = input$`devCap-year`, 
+                   inputyear = input$`devCap-year`, 
                    go = input$`devCap-go`, 
                    paths = paths(), 
                    devdata = devdt(), 
-                   capdata = capdt()
+                   capdata = capdt(),
+                   centers = centers.shape
     )
   })
     
@@ -340,7 +341,7 @@ server <- function(input, output, session) {
     cap.type <- c("max_dev", "max_dev_nonresidential", "max_dev_residential")
     
     cap.table <- NULL
-    
+    # browser()
     for (r in 1:length(runs)){
       cap.files <- as.list(list.files(file.path(runs[r], "indicators"), pattern = paste0("max_dev(_\\w+)*", ".csv")))
       if (length(cap.files) >= 1){
