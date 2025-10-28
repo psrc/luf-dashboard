@@ -3,7 +3,7 @@
 
 joinShp2Tbl <- function(geog, table){
   # Joins reactive tables to respective shapefiles.
-
+  if(is.null(table)) return(NULL)
   s <- switch(geog,
          zone = merge(zone.shape, table, by = "name_id"),
          faz = merge(faz.shape, table, by = "name_id"))

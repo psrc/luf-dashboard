@@ -48,7 +48,6 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
     })
     
     mmdt <- reactive({
-      alldt <- alldata
       runnames <- get_runnames(runs)
       path <- paths[names(paths) %in% runnames]
 
@@ -63,30 +62,47 @@ ct_mismatch_server <- function(id, runs, paths, alldata, baseyears, inputyear) {
       for (ind in indicator.names) {
         
         # Does control file exist in directory?
-        p <- file.path(path, 'indicators', paste0('annual_', indicator_settings[[ind]][2], '_control_totals.csv'))
+        ct.file.name <- paste0('annual_', indicator_settings[[ind]][2], '_control_totals.csv')
+        p <- file.path(path, 'indicators', ct.file.name)
         does.file.exist <- file.exists(p)
+        if(!does.file.exist)
+          p <- file.path('data', ct.file.name)
         
         # Read control totals
-        if(does.file.exist == TRUE) {
+        #if(does.file.exist == TRUE) {
           ct <- read.csv(p)
-          ct.by.jur <- data.table(ct)[,list(ct = sum(get(indicator_settings[[ind]][1]))), by = c("subreg_id", "year")]
+          by <- c()
+          is.regional <- TRUE
+          if('subreg_id' %in% colnames(ct)){
+            # CT by subreg_id
+            by <- c(by, "subreg_id")
+            is.regional <- FALSE
+          }
+          ct.by.jur <- data.table(ct)[,list(ct = sum(get(indicator_settings[[ind]][1]))), by = c(by, "year")]
           ct.by.jur <- ct.by.jur[year == yrs[2],]
-          ind.values <- data.table(read.csv(file.path(path, 'indicators', paste0('subreg__table__', ind, '.csv')))) # city by run by indicator
+          if(is.regional){
+            ct.by.jur[, subreg_id := 1]
+            ind.values <- data.table(read.csv(file.path(path, 'indicators', paste0('alldata__table__', ind, '.csv')))) # regional values
+            setnames(ind.values, "alldata_id", "subreg_id")
+          } else {
+            ind.values <- data.table(read.csv(file.path(path, 'indicators', paste0('subreg__table__', ind, '.csv')))) # values by subreg
+          }
           cols <- c('subreg_id', str_subset(colnames(ind.values), paste0(".*", yrs[2], "$")))
           ind.values <- ind.values[, ..cols]
           ct.join <- merge(ct.by.jur, ind.values, by='subreg_id')
           no.match <- ct.join[ct != get(cols[2]),]
           this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
-        } else {
-          ct <- read.table(file.path('data', paste0('annual_', indicator_settings[[ind]][2], '_control_totals.csv')), sep = ',', header=TRUE)
-          ct.by.jur <- data.table(ct)[,list(ct = sum(get(indicator_settings[[ind]][1]))), by = c("city_id", "year")]
-          ct.by.jur <- ct.by.jur[year == yrs[2],]
-          ind.values <- alldt[geography == 'city' & run == runnames & indicator == eval(names(grep(ind, indicator.names, value = TRUE))), .SD, .SDcols = c("name_id", paste0("yr", yrs[2]))]
-          setnames(ind.values, c("name_id", paste0("yr", yrs[2])), c("city_id", paste(ind, yrs[2], sep='_')))
-          ct.join <- merge(ct.by.jur, ind.values, by = 'city_id')
-          no.match <- ct.join[ct != get(paste(ind, yrs[2], sep = "_")),]
-          this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
-        }
+        # } else {
+        #   alldt <- alldata
+        #   ct <- read.table(file.path('data', paste0('annual_', indicator_settings[[ind]][2], '_control_totals.csv')), sep = ',', header=TRUE)
+        #   ct.by.jur <- data.table(ct)[,list(ct = sum(get(indicator_settings[[ind]][1]))), by = c("city_id", "year")]
+        #   ct.by.jur <- ct.by.jur[year == yrs[2],]
+        #   ind.values <- alldt[geography == 'city' & run == runnames & indicator == eval(names(grep(ind, indicator.names, value = TRUE))), .SD, .SDcols = c("name_id", paste0("yr", yrs[2]))]
+        #   setnames(ind.values, c("name_id", paste0("yr", yrs[2])), c("city_id", paste(ind, yrs[2], sep='_')))
+        #   ct.join <- merge(ct.by.jur, ind.values, by = 'city_id')
+        #   no.match <- ct.join[ct != get(paste(ind, yrs[2], sep = "_")),]
+        #   this.report <- data.table(indicator = ind, total = nrow(no.match), max_percent = NA)
+        # }
         
         # calculate ct, simulated, diff for regional total
         this.totals <- ct.join[, lapply(.SD, sum), .SDcols = c('ct', str_subset(colnames(ct.join), paste0(".*", yrs[2])))

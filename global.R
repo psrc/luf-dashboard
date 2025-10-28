@@ -11,7 +11,8 @@ library(tidyverse)
 library(psrcelmer)
 
 # rund <- 'N:/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally (Christy's machine)
-# rund <- '~/N/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
+#rund <- '~/n$/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs' # When running locally
+#rund <- "/Users/hana/opus/urbansim_data/data/psrc_parcel/runs"
 rund <- "/media/aws-prod-file01modeldata2/vision2050/opusgit/urbansim_data/data/psrc_parcel/runs" # Shiny Server
 
 attribute <- c("population", "households","employment", "residential_units")

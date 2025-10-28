@@ -26,9 +26,9 @@ dev_cap_server <- function(id, run, geog, inputyear, go, paths, devdata, capdata
   moduleServer(id, function(input, output, session) {
     
     create_dcap_tbl <- function(captype_val, devtype_val) {
-      if (is.null(capdata) || is.null(devdata)) return(NULL)
+      if (is.null(capdata) || is.null(devdata) || nrow(capdata) == 0 || nrow(devdata) == 0) return(NULL)
       if (is.null(run) || is.null(geog) || is.null(year)) return(NULL)
-      
+
       t1 <- capdata[run == run & geography == geog & captype == captype_val,][,.(name_id, capacity, captype)]
       t2 <- devdata[run == run & geography == geog & year == inputyear & devtype == devtype_val,]
       

@@ -154,7 +154,6 @@ server <- function(input, output, session) {
   
   baseyears <- reactive({
     # returns a data frame of runs and their baseyears
-
     # for each run, find its baseyear
     a <- alldt()[, lapply(.SD, sum), .SDcols = patterns("^yr"), by = .(run)]
     b.yrs <- names(a[,2:ncol(a)])[max.col(a[,2:ncol(a)] != 0, ties.method = 'first')]
@@ -237,8 +236,10 @@ server <- function(input, output, session) {
           if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
             filename <- paste0(basefilename, 'An.csv') # use annual indicator if available
           else filename <- paste0(basefilename, '.csv')
+          full.filename <- file.path(runs[r], "indicators",filename)
+          if(!file.exists(full.filename)) next
           #dt <- read.csv(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
-          dt <- fread(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
+          dt <- fread(full.filename, header = TRUE, sep = ",")
           colnames(dt)[2: ncol(dt)] <- str_replace(colnames(dt)[2: ncol(dt)], '\\w+_', 'yr') # rename columns
           colnames(dt)[1] <- str_replace(colnames(dt)[1], '\\w+_', 'name_')
           dt$indicator <- switch(attribute[i],
@@ -348,8 +349,9 @@ server <- function(input, output, session) {
         for (g in 1:length(cap.geography)){
           for (c in 1:length(cap.type)){
             cap.tbl <- NULL
-            cap.file <- paste0(cap.geography[g], '__table__', cap.type[c], "_capacity", ".csv")
-            cap.tbl <- read.csv(file.path(runs[r],"indicators", cap.file), header = TRUE, sep = ",")
+            cap.file <- file.path(runs[r],"indicators", paste0(cap.geography[g], '__table__', cap.type[c], "_capacity", ".csv"))
+            if(!file.exists(cap.file)) next
+            cap.tbl <- read.csv(cap.file, header = TRUE, sep = ",")
             cap.tbl$captype <- switch(cap.type[c],
                                       "max_dev" = "Total",
                                       "max_dev_nonresidential" = "Non-Residential",
@@ -387,8 +389,9 @@ server <- function(input, output, session) {
         for (g in 1:length(cap.geography)){
           for (d in 1:length(dev.type)){
             dev.tbl <- NULL
-            dev.file <- paste0(cap.geography[g], '__table__', dev.type[d], ".csv")
-            dev.tbl <- fread(file.path(runs[r],"indicators", dev.file), header = TRUE)
+            dev.file <- file.path(runs[r],"indicators", paste0(cap.geography[g], '__table__', dev.type[d], ".csv"))
+            if(!file.exists(dev.file)) next
+            dev.tbl <- fread(dev.file, header = TRUE)
             dev.tbl.m <- melt(dev.tbl, id.vars = c(paste0(cap.geography[g], "_id")), measure.vars = names(dev.tbl)[2:ncol(dev.tbl)])
             dev.tbl.m[, `:=` (devtype = switch(dev.type[d],
                                                "residential_units" = "Residential Units",
