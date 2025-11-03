@@ -13,7 +13,13 @@ get_trim_runnames <- function(runnames) {
   map(runnames, ~str_split(.x, '\\.')[[1]][1]) %>% flatten() %>% unlist()
 }
 
-
+get_full_table_file_name <- function(geography, attribute, run){
+  basefilename <- paste0(geography,'__',"table",'__',attribute)
+  if(file.exists(file.path(run, "indicators", paste0(basefilename, 'An.csv'))))
+    filename <- paste0(basefilename, 'An.csv') # use annual indicator if available
+  else filename <- paste0(basefilename, '.csv')
+  return(file.path(run, "indicators",filename))
+}
 
 # plots -------------------------------------------------------------------
 

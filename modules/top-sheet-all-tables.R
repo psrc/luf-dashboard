@@ -35,6 +35,9 @@ topsheet_server <- function(id, dttable, alldata, runs, tsyear, baseyear, paths)
                     ),
                     tabPanel('Key Locations',
                              dt_key_loc_ui(ns('topSheetKeyLoc'))
+                    ),
+                    tabPanel('RGs',
+                             dt_rgs_ui(ns('topSheetRGs'))
                     )
                     
         ) # end tabsetPanel
@@ -87,6 +90,12 @@ topsheet_server <- function(id, dttable, alldata, runs, tsyear, baseyear, paths)
                       tsyear, 
                       baseyear, 
                       alldata)
+    
+    dt_rgs_server('topSheetRGs', 
+                      paths, 
+                      runs, 
+                      tsyear,  
+                      baseyear)
     
     
   })

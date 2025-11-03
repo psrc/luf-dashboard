@@ -232,13 +232,8 @@ server <- function(input, output, session) {
     for (r in 1:length(runs)) {
       for (a in 1:length(geography)){
         for (i in 1:length(attribute)){
-          basefilename <- paste0(geography[a],'__',"table",'__',attribute[i])
-          if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
-            filename <- paste0(basefilename, 'An.csv') # use annual indicator if available
-          else filename <- paste0(basefilename, '.csv')
-          full.filename <- file.path(runs[r], "indicators",filename)
+          full.filename <- get_full_table_file_name(geography[a], attribute[i], runs[r])
           if(!file.exists(full.filename)) next
-          #dt <- read.csv(file.path(runs[r], "indicators",filename), header = TRUE, sep = ",")
           dt <- fread(full.filename, header = TRUE, sep = ",")
           colnames(dt)[2: ncol(dt)] <- str_replace(colnames(dt)[2: ncol(dt)], '\\w+_', 'yr') # rename columns
           colnames(dt)[1] <- str_replace(colnames(dt)[1], '\\w+_', 'name_')
@@ -273,11 +268,8 @@ server <- function(input, output, session) {
 
     for (r in 1:length(runs)) {
       for (i in 1:length(attribute)){
-        basefilename <- paste0('control__',"table",'__',attribute[i])
-        if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
-          filename <- paste0(basefilename, 'An.csv')
-        else filename <- paste0(basefilename, '.csv')
-        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+        filename <- get_full_table_file_name("control", attribute[i], runs[r])
+        dt <- fread(filename, header = TRUE, sep = ",")
         dt <- melt(dt, id.vars = 'control_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
         
@@ -308,11 +300,8 @@ server <- function(input, output, session) {
     
     for (r in 1:length(runs)) {
       for (i in 1:length(attribute)){
-        basefilename <- paste0('control_hct__',"table",'__',attribute[i])
-        if(file.exists(file.path(runs[r], "indicators", paste0(basefilename, 'An.csv'))))
-          filename <- paste0(basefilename, 'An.csv')
-        else filename <- paste0(basefilename, '.csv')
-        dt <- fread(file.path(runs[r], "indicators", filename), header = TRUE, sep = ",")
+        filename <- get_full_table_file_name("control_hct", attribute[i], runs[r])
+        dt <- fread(filename, header = TRUE, sep = ",")
         dt <- melt(dt, id.vars = 'control_hct_id', variable.name = 'indicator', value.name = 'estimate')
         dt[, run := names(runs)[r]]
         

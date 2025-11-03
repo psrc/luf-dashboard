@@ -39,8 +39,8 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
  
       for (r in 1:length(runnames)) {
         for (i in 1:length(attribute)){
-          filename <- paste0('growth_center__table','__',attribute[i], '.csv')
-          datatable <- read.csv(file.path(paths[r],"indicators",filename), header = TRUE, sep = ",")
+          filename <- get_full_table_file_name("growth_center", attribute[i], paths[r])
+          datatable <- read.csv(filename, header = TRUE, sep = ",")
           colnames(datatable)[2:ncol(datatable)] <- str_replace(colnames(datatable)[2: ncol(datatable)], '\\w+_', 'yr') # rename columns
           colnames(datatable)[1] <- str_replace(colnames(datatable)[1], '\\w+_', 'name_')
           datatable$indicator <- switch(attribute[i],
