@@ -28,7 +28,8 @@ dt_rgs_server <- function(id, paths, runs, tsyear, baseyear) {
       # compile data for rgs
       
       # gather basic run info  
-      runs <- get_runnames(runs)
+      #runs <- get_runnames(runs)
+      runs <- names(paths)
       runnames <- get_trim_runnames(runs)
       
       # initialize rgs.tables
@@ -36,7 +37,7 @@ dt_rgs_server <- function(id, paths, runs, tsyear, baseyear) {
       new.colnames <- c("name_id", paste0("yr", years), "indicator", "run") 
       colnames(rgs.dt) <- new.colnames
       setDT(rgs.dt)
- 
+
       for (r in 1:length(runnames)) {
         for (i in 1:length(attribute)){
           filename <- get_full_table_file_name("city", attribute[i], paths[r])
@@ -70,7 +71,8 @@ dt_rgs_server <- function(id, paths, runs, tsyear, baseyear) {
       # compile data for rgs by county
       
       # gather basic run info  
-      runs <- get_runnames(runs)
+      #runs <- get_runnames(runs)
+      runs <- names(paths)
       runnames <- get_trim_runnames(runs)
       
       # initialize rgs.table

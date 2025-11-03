@@ -22,7 +22,8 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       # read all files and collate into one table
       
       # gather basic run info  
-      runs <- get_runnames(runs)
+      #runs <- get_runnames(runs)
+      runs <- names(paths)
       runnames <- get_trim_runnames(runs)
       
       pat <- "city__dataset_table__employment_by_aggr_sector__\\d+"

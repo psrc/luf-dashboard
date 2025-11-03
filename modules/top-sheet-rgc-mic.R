@@ -28,7 +28,8 @@ dt_centers_server <- function(id, paths, runs, tsyear, baseyear) {
       # compile data for rgcs and mics
       
       # gather basic run info  
-      runs <- get_runnames(runs)
+      #runs <- get_runnames(runs)
+      runs <- names(paths)
       runnames <- get_trim_runnames(runs)
       
       # initialize growctr.table
