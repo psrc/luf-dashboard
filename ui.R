@@ -19,6 +19,8 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                               dec_widgets_ui('dec')),
                              conditionalPanel(condition = "input.oneTab == 'gw'",
                                               growth_widgets_ui('growth')),
+                             conditionalPanel(condition = "input.oneTab == 'eq'",
+                                              equity_widgets_ui('equity')),
                              conditionalPanel(condition = "input.oneTab == 'dc'",
                                               dev_cap_widgets_ui('devCap'))
                       ),
@@ -41,6 +43,10 @@ navbarPage(title = "Land Use Forecast Dashboard",
                                                   value = 'gw',
                                                   growth_plot_map_tbl_ui('growthContent')
                                                   ),
+                                         tabPanel('Equity',
+                                                  value = 'eq',
+                                                  equity_ui('equityContent')
+                                         ),
                                          tabPanel('Development Capacity',
                                                   value = 'dc',
                                                   dev_cap_ui('devCapContent')

@@ -74,15 +74,22 @@ map.popup <- function(shapefile, baseyear.df, xcolumn, ycolumn, layerctrl, xtitl
            "<br><strong>", get_trim_runnames(ytitle)," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
            "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
   } else {
-    paste0("<strong>ID: </strong>", shapefile$name_id,
+    if(tab == 'equity_total') {
+      paste0("<strong>ID: </strong>", shapefile$name_id,
+             "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
+             "<br><strong>", get_trim_runnames(xtitle)," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","))
+    } else {
+      paste0("<strong>ID: </strong>", shapefile$name_id,
            "<br><strong>", layerctrl, " Name: </strong>", shapefile$Name,
            "<br><strong>", paste('Base', base.x)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun1']], 0), big.mark = ","),
            "<br><strong>", paste('Base', base.y)," estimate: </strong>", prettyNum(round(shapefile[['base_estrun2']], 0), big.mark = ","),
            "<br><strong>", get_trim_runnames(xtitle)," estimate: </strong>", prettyNum(round(shapefile[[xcolumn]], 0), big.mark = ","),
            "<br><strong>", get_trim_runnames(ytitle)," estimate: </strong>", prettyNum(round(shapefile[[ycolumn]], 0), big.mark = ","),
            "<br><strong>Difference: </strong>", prettyNum(round(shapefile$diff, 0), big.mark = ","))
+    }
   }
 }
+
 
 map.basic.popup <- function(shapefile, xcolumn, ycolumn, layerctrl, xtitle, ytitle){
   # Writes Leaflet popup text for development capacity shapes. Requires reactive shapefile, string x&y axis titles.

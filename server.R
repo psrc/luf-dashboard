@@ -36,6 +36,7 @@ server <- function(input, output, session) {
     one_run_widgets_server('spPlaces', paths())
     dec_widgets_server('dec', paths())
     growth_widgets_server('growth', paths(), baseyears(), alldt())
+    equity_widgets_server('equity', paths(), baseyears(), alldt())
   })
   
   observeEvent(input$`mismatch-go`, {
@@ -64,6 +65,20 @@ server <- function(input, output, session) {
                                paths(),
                                baseyears()
                                )
+  })
+  
+  observeEvent(input$`equity-go`, {
+    equity_server('equityContent',
+                               input$`equity-run`,
+                               input$`equity-geography`,
+                               input$`equity-indicator`,
+                               input$`equity-valtype`,
+                               input$`equity-go`,
+                               eqtdt(),
+                               #alldt(), 
+                               paths(),
+                               baseyears()
+    )
   })
 
   # Multi-Run ----
@@ -402,6 +417,64 @@ server <- function(input, output, session) {
     } # end of runnames loop
     
     return(dev.table)
+  })
+  
+  eqtdt <- eventReactive(input$`runChoice_multi-go`, {
+    # equity data
+    runs <- paths()
+    alldata <- NULL
+    for (r in 1:length(runs)){
+      hh.files <- as.list(list.files(file.path(runs[r], "indicators"),
+                                            pattern = 'dataset_table__(households|persons)_characteristics(_)*(\\w+)*(_)*(\\d+)*\\.tab'))
+      #pers.files <- as.list(list.files(file.path(runs[r], "indicators"),
+      #                               pattern = 'dataset_table__persons_characteristics(_)*(\\w+)*(_)*(\\d+)*\\.tab'))
+      
+      if (length(hh.files) == 0) next
+
+      for (f in 1:length(hh.files)){
+          geo <- str_extract(hh.files[f], "^(\\w+)__dataset") %>% strsplit("__") %>% unlist()
+          
+          yr <- str_extract(hh.files[f], "(\\d+)")
+          dt0 <- fread(file.path(runs[r], 'indicators', hh.files[f])) 
+          
+          
+          setnames(dt0, colnames(dt0), str_match(colnames(dt0), "(\\w+_\\w+)[^_^\\d+]")[,1])
+          setnames(dt0, colnames(dt0)[1], "name_id")
+          
+          # convert HH measures to percentage
+          if("low_income" %in% colnames(dt0) && "hh_total" %in% colnames(dt0))
+            dt0[, low_income := round(low_income / hh_total * 100, 1)]
+          if("high_income" %in% colnames(dt0) && "hh_total" %in% colnames(dt0))
+            dt0[, high_income := round(high_income / hh_total * 100, 1)]
+          if("hh_total" %in% colnames(dt0)) dt0[, hh_total := NULL]
+          
+          # convert persons measures to percentage
+          if("pop_white" %in% colnames(dt0) && "pop_total" %in% colnames(dt0)) {
+            dt0[, pop_non_white := round((pop_total - pop_white) / pop_total * 100, 1)]
+            dt0[, pop_white := round(pop_white / pop_total * 100, 1)]
+          }
+          if("pop_black" %in% colnames(dt0) && "pop_total" %in% colnames(dt0))
+            dt0[, pop_black := round(pop_black / pop_total * 100, 1)]
+          if("pop_asian" %in% colnames(dt0) && "pop_total" %in% colnames(dt0))
+            dt0[, pop_asian := round(pop_asian / pop_total * 100, 1)]
+          if("pop_hsp" %in% colnames(dt0) && "pop_total" %in% colnames(dt0))
+            dt0[, pop_hsp := round(pop_hsp / pop_total * 100, 1)]
+          if("pop_total" %in% colnames(dt0)) dt0[, pop_total := NULL]
+          
+          dt <- melt.data.table(dt0, id.vars = colnames(dt0)[1], measure.vars = colnames(dt0)[2:ncol(dt0)], variable.name = "indicator", value.name = "estimate")
+          dt[, `:=` (run = names(runs)[r], geography = geo[1], year = yr)]
+          alldata <- rbind(alldata, dt)
+        } # end hh.files loop
+
+    } # end runs loop
+    
+    #dt1 <- stypedt[, multifamily := MF + CO][, singlefamily := Total - multifamily]
+    #dt2 <- melt.data.table(dt1, id.vars = colnames(dt1)[1:5], measure.vars = colnames(dt1)[(ncol(dt1)-1):ncol(dt1)], variable.name = 'strtype', value.name = "estimate")
+    #browser()
+    #ind.name <- c("HH" = "Households", "DU" = "Residential Units")
+    #dt2$indicator <- ind.name[dt2$indicator]
+    
+    return(alldata)
   })
   
   # cities_an_dt <- eventReactive(input$`runChoice_multi-go`,{
