@@ -1,31 +1,51 @@
 # leaflet -----------------------------------------------------------------
 
+geogfct <- function(geog)
+  paste0(geog, "shp")
 
-joinShp2Tbl <- function(geog, table){
+zoneshp <- reactive({
+  st_read(file.path(arc.root, zone.link)) %>%
+      rename(name_id = taz)
+})
+
+fazshp <- reactive({
+  st_read(file.path(arc.root, faz.link)) %>% 
+    rename(name_id = faz10)
+})
+
+cityshp <- reactive({
+  # read shp from ElmerGeo
+  st_read_elmergeo(cities.shape) %>% 
+    rename(name_id = city_id)
+})
+
+controlshp <- reactive({
+  # read shp from ElmerGeo
+  st_read_elmergeo(control.shape) %>% 
+    rename(name_id = control_id)
+})
+  
+growth_centershp <- reactive({
+  shp <- st_read(file.path(arc.root, centers.link))
+  # make some name corrections
+  shp$name[shp$name == "Issaquah"] <- "Issaquah RGC"
+  shp$name[shp$name == "University Place"] <- "University Place RGC"
+  # another mismatch is "Greater Downtown Kirkland", but not sure what it is in our lookup
+  shp <- merge(shp, rgc.lookup[, .(city_id, name_id = growth_center_id, name)], by = "name", all.x = TRUE) 
+  return(shp)
+})
+
+joinShp2Tbl <- function(shp, table){
   # Joins reactive tables to respective shapefiles.
   if(is.null(table)) return(NULL)
-  s <- switch(geog,
-         zone = merge(zone.shape, table, by = "name_id"),
-         faz = merge(faz.shape, table, by = "name_id"))
-  
-  if(geog == 'city') {
-    # read shp from ElmerGeo
-    s <- st_read_elmergeo(cities.shape)
-    colnames(s)[which(names(s) == "city_id")] <- "name_id"
-    s <- merge(s, table, by = "name_id")
-  } else if(geog == 'control') {
-    s <- st_read_elmergeo(control.shape)
-    colnames(s)[which(names(s) == "control_id")] <- "name_id"
-    s <- merge(s, table, by = "name_id")
-  }
-  
+  s <- merge(shp, table, by = "name_id")
   return(s)
 }
 
 map.colorBins <- function(diffcolumn){
   # Sets Leaflet color scheme and numeric bins.
   
-  rng <- range(diffcolumn)
+  rng <- range(diffcolumn, na.rm = TRUE)
   if (rng[1] < 0 & rng[2] > 0){
     diff.range <- "both"
     bins.from.positive <- abs(rng[2]) > abs(rng[1])

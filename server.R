@@ -160,8 +160,8 @@ server <- function(input, output, session) {
                    go = input$`devCap-go`, 
                    paths = paths(), 
                    devdata = devdt(), 
-                   capdata = capdt(),
-                   centers = centers.shape
+                   capdata = capdt()#,
+                   #centers = centershp()
     )
   })
     

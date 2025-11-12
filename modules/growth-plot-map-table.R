@@ -101,7 +101,7 @@ growth_plot_map_tbl_server <- function(id, run, geog, struc, ind, inputyears, go
     shape <- reactive({
       # join shapefile to table for visualization
       
-      joinShp2Tbl(geog, table())
+      joinShp2Tbl(do.call(geogfct(geog), list()), table())
     })
     
     output$dtTable <- renderDT({

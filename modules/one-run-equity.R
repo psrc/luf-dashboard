@@ -83,7 +83,7 @@ equity_server <- function(id, run, geog, ind, valtype, go, eqtdata, paths, basey
     shape <- reactive({
       # join shapefile to table for visualization
       
-      joinShp2Tbl(geog, table())
+      joinShp2Tbl(do.call(geogfct(geog), list()), table())
     })
     
     output$map_dif <- renderLeaflet({

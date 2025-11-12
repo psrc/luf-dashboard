@@ -22,7 +22,7 @@ dev_cap_ui <- function(id) {
   )
 }
 
-dev_cap_server <- function(id, run, geog, inputyear, go, paths, devdata, capdata, centers) {
+dev_cap_server <- function(id, run, geog, inputyear, go, paths, devdata, capdata) {
   moduleServer(id, function(input, output, session) {
     
     create_dcap_tbl <- function(captype_val, devtype_val) {
@@ -65,17 +65,17 @@ dev_cap_server <- function(id, run, geog, inputyear, go, paths, devdata, capdata
 
     # Total shapefile ready for visualization
     shape_total <- reactive({
-      joinShp2Tbl(geog, total())
+      joinShp2Tbl(do.call(geogfct(geog), list()), total())
     })
 
     # Residential shapefile ready for visualization
     shape_res <- reactive({
-      joinShp2Tbl(geog, res())
+      joinShp2Tbl(do.call(geogfct(geog), list()), res())
     })
 
     # Non-Residential shapefile ready for visualization
     shape_nonres <- reactive({
-      joinShp2Tbl(geog, nonres())
+      joinShp2Tbl(do.call(geogfct(geog), list()), nonres())
     })
 
     # leaflet layer control
@@ -110,13 +110,13 @@ dev_cap_server <- function(id, run, geog, inputyear, go, paths, devdata, capdata
                                     x, 
                                     y)
       
-      geo.popup3 <- paste0("<strong>Center: </strong>", centers[["name_id"]])
+      geo.popup3 <- paste0("<strong>Center: </strong>", s[["name_id"]])
       
-      if (geog == "growth_center"){
-        map <- map.layers(s, geo(), popup_label, geo.popup1, pal)
-      } else {
+      #if (geog == "growth_center"){
+      #  map <- map.layers(s, geo(), popup_label, geo.popup1, pal)
+      #} else {
         map <- map.layers(s, geo(), popup_label, geo.popup1, geo.popup3, pal)
-      }
+      #}
       
       map
       
