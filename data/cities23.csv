@@ -1,96 +1,117 @@
-county_id,city_id,"city_name","rg_proposed","fips_rgs_proposed_id",rgs_id
-33,1,"Algona","CitiesTowns","3304",4
-33,2,"Auburn","Core","3302",2
-33,3,"Beaux Arts","CitiesTowns","3304",4
-33,4,"Bellevue","Metro","3301",1
-33,5,"Black Diamond","CitiesTowns","3304",4
-33,6,"Bothell","Core","3302",2
-33,7,"Burien","Core","3302",2
-33,8,"Carnation","CitiesTowns","3304",4
-33,9,"Clyde Hill","CitiesTowns","3304",4
-33,10,"Covington","CitiesTowns","3304",4
-33,11,"Des Moines","HCT","3303",3
-33,12,"Duvall","CitiesTowns","3304",4
-33,13,"Enumclaw","CitiesTowns","3304",4
-33,14,"Federal Way","Core","3302",2
-33,15,"Hunts Point","CitiesTowns","3304",4
-33,16,"Issaquah","Core","3302",2
-33,17,"Kenmore","HCT","3303",3
-33,18,"Kent","Core","3302",2
-33,19,"King Rural","Rural","3306",6
-33,20,"Kirkland","Core","3302",2
-33,21,"Lake Forest Park","HCT","3303",3
-33,22,"Maple Valley","CitiesTowns","3304",4
-33,23,"Medina","CitiesTowns","3304",4
-33,24,"Mercer Island","HCT","3303",3
-33,25,"Milton","CitiesTowns","3304",4
-33,26,"Newcastle","HCT","3303",3
-33,27,"Normandy Park","CitiesTowns","3304",4
-33,28,"North Bend","CitiesTowns","3304",4
-33,29,"Pacific","CitiesTowns","3304",4
-33,30,"Redmond","Core","3302",2
-33,31,"Renton","Core","3302",2
-33,32,"Sammamish","CitiesTowns","3304",4
-33,33,"Sea Tac","Core","3302",2
-33,34,"Seattle","Metro","3301",1
-33,35,"Shoreline","HCT","3303",3
-33,36,"Skykomish","CitiesTowns","3304",4
-33,37,"Snoqualmie","CitiesTowns","3304",4
-33,38,"Tukwila","Core","3302",2
-33,39,"Uninc Urban King","HCT","3303",3
-33,40,"Woodinville","HCT","3303",3
-33,41,"Yarrow Point","CitiesTowns","3304",4
-35,42,"Bainbridge Island","HCT","3503",3
-35,43,"Bremerton","Metro","3501",1
-35,44,"Kitsap Rural","Rural","3506",6
-35,45,"Port Orchard","HCT","3503",3
-35,46,"Poulsbo","HCT","3503",3
-35,47,"Silverdale UGA","Core","3502",2
-35,48,"Uninc Urban Kitsap","Metro","3501",1
-53,49,"Auburn","Core","5302",2
-53,50,"Bonney Lake","CitiesTowns","5304",4
-53,51,"Buckley","CitiesTowns","5304",4
-53,52,"Carbonado","CitiesTowns","5304",4
-53,53,"DuPont","HCT","5303",3
-53,54,"Eatonville","CitiesTowns","5304",4
-53,55,"Edgewood","CitiesTowns","5304",4
-53,57,"Fife","HCT","5303",3
-53,58,"Fircrest","HCT","5303",3
-53,59,"Gig Harbor","CitiesTowns","5304",4
-53,60,"Lakewood","Core","5302",2
-53,61,"Milton","CitiesTowns","5304",4
-53,62,"Orting","CitiesTowns","5304",4
-53,63,"Pacific","CitiesTowns","5304",4
-53,64,"Pierce Rural","Rural","5306",6
-53,65,"Puyallup","Core","5302",2
-53,66,"Roy","CitiesTowns","5304",4
-53,67,"Ruston","CitiesTowns","5304",4
-53,68,"South Prairie","CitiesTowns","5304",4
-53,69,"Steilacoom","CitiesTowns","5304",4
-53,70,"Sumner","HCT","5303",3
-53,71,"Tacoma","Metro","5301",1
-53,72,"Uninc Urban Pierce","HCT","5305",3
-53,73,"University Place","Core","5302",2
-53,74,"Wilkeson","CitiesTowns","5304",4
-61,75,"Arlington","HCT","6103",3
-61,76,"Bothell","Core","6102",2
-61,77,"Brier","CitiesTowns","6104",4
-61,78,"Darrington","CitiesTowns","6104",4
-61,79,"Edmonds","HCT","6103",3
-61,80,"Everett","Metro","6101",1
-61,81,"Gold Bar","CitiesTowns","6104",4
-61,82,"Granite Falls","CitiesTowns","6104",4
-61,83,"Index","CitiesTowns","6104",4
-61,84,"Lake Stevens","CitiesTowns","6104",4
-61,85,"Lynnwood","Core","6102",2
-61,86,"Marysville","HCT","6103",3
-61,87,"Mill Creek","HCT","6103",3
-61,88,"Monroe","CitiesTowns","6104",4
-61,89,"Mountlake Terrace","HCT","6103",3
-61,90,"Mukilteo","HCT","6103",3
-61,91,"Snohomish","CitiesTowns","6104",4
-61,92,"Snohomish Rural","Rural","6106",6
-61,93,"Stanwood","CitiesTowns","6104",4
-61,94,"Sultan","CitiesTowns","6104",4
-61,96,"Uninc Urban Snoh","HCT","6103",3
-61,97,"Woodway","CitiesTowns","6104",4
+"city_id","county_id","city_name","rgs_id","rg_name","large_area","county","old_large_area","old_lgarea_group"
+116,33,"Algona",4,"CitiesTowns","Green River","King","Green River","Green River"
+1,33,"Auburn",2,"Core","Green River","King","SW King","SW King"
+2,33,"Beaux Arts",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (2)"
+3,33,"Bellevue",1,"Metro","Eastside King","King","Eastside King","Eastside King (2)"
+4,33,"Black Diamond",6,"Rural","King Other","King","SE King","SE King and King Other"
+5,33,"Black Diamond",4,"CitiesTowns","SE King","King","SE King","SE King and King Other"
+6,33,"Bothell",2,"Core","Eastside King","King","Eastside King","Eastside King (1)"
+7,33,"Burien",2,"Core","SW King","King","SW King","SW King"
+8,33,"Carnation",6,"Rural","King Other","King","King Other","SE King and King Other"
+9,33,"Carnation",4,"CitiesTowns","King Other","King","King Other","SE King and King Other"
+10,33,"Clyde Hill",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (1)"
+11,33,"Covington",4,"CitiesTowns","SE King","King","SE King","SE King and King Other"
+12,33,"Des Moines",3,"HCT","SW King","King","SW King","SW King"
+13,33,"Duvall",4,"CitiesTowns","King Other","King","King Other","SE King and King Other"
+14,33,"Enumclaw",6,"Rural","SE King","King","SE King","SE King and King Other"
+15,33,"Enumclaw",4,"CitiesTowns","SE King","King","SE King","SE King and King Other"
+16,33,"Federal Way",2,"Core","SW King","King","SW King","SW King"
+17,33,"Hunts Point",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (1)"
+18,33,"Issaquah",2,"Core","Eastside King","King","Eastside King","Eastside King (2)"
+19,33,"Kenmore",3,"HCT","Eastside King","King","Eastside King","Eastside King (1)"
+20,33,"Kent",6,"Rural","SE King","King","Green River","Green River"
+21,33,"Kent",2,"Core","Green River","King","Green River","Green River"
+22,33,"King Rural",6,"Rural","King Other","King","King Other","SE King and King Other"
+23,33,"Kirkland",2,"Core","Eastside King","King","Eastside King","Eastside King (1)"
+24,33,"Lake Forest Park",3,"HCT","Shoreline","King","Shoreline","Seattle and Shoreline"
+25,33,"Maple Valley",4,"CitiesTowns","SE King","King","SE King","SE King and King Other"
+26,33,"Medina",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (1)"
+27,33,"Mercer Island",3,"HCT","Eastside King","King","Eastside King","Eastside King (2)"
+28,33,"Milton",4,"CitiesTowns","SW King","King","SW King","SW King"
+29,33,"Newcastle",3,"HCT","Eastside King","King","Eastside King","Eastside King (2)"
+30,33,"Normandy Park",4,"CitiesTowns","SW King","King","SW King","SW King"
+31,33,"North Bend",4,"CitiesTowns","King Other","King","King Other","SE King and King Other"
+32,33,"Pacific",4,"CitiesTowns","Green River","King","Green River","Green River"
+33,33,"Redmond",6,"Rural","Eastside King","King","Eastside King","Eastside King (1)"
+34,33,"Redmond",2,"Core","Eastside King","King","Eastside King","Eastside King (1)"
+35,33,"Renton",2,"Core","Green River","King","Green River","Green River"
+36,33,"Sammamish",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (2)"
+37,33,"SeaTac",2,"Core","SW King","King","SW King","SW King"
+38,33,"Seattle",1,"Metro","Seattle","King","Seattle","Seattle and Shoreline"
+39,33,"Shoreline",3,"HCT","Shoreline","King","Shoreline","Seattle and Shoreline"
+40,33,"Skykomish",4,"CitiesTowns","King Other","King","King Other","SE King and King Other"
+41,33,"Snoqualmie",6,"Rural","King Other","King","King Other","SE King and King Other"
+42,33,"Snoqualmie",4,"CitiesTowns","King Other","King","King Other","SE King and King Other"
+43,33,"Tukwila",2,"Core","Green River","King","Green River","Green River"
+44,33,"Uninc Urban King",3,"HCT","Green River","King","SW King","SW King"
+45,33,"Uninc Urban King",5,"UU","Eastside King","King","SW King","SW King"
+46,33,"Woodinville",3,"HCT","Eastside King","King","Eastside King","Eastside King (1)"
+47,33,"Yarrow Point",4,"CitiesTowns","Eastside King","King","Eastside King","Eastside King (1)"
+48,35,"Bainbridge Island",3,"HCT","North Kitsap","Kitsap","North Kitsap","Central, North, and South Kitsap"
+49,35,"Bremerton",1,"Metro","Central Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+50,35,"Bremerton UGA",1,"Metro","Central Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+51,35,"Kitsap Rural",6,"Rural","Central Kitsap","Kitsap","North Kitsap","Central, North, and South Kitsap"
+52,35,"Port Orchard",6,"Rural","South Kitsap","Kitsap","South Kitsap","Central, North, and South Kitsap"
+53,35,"Port Orchard",3,"HCT","South Kitsap","Kitsap","South Kitsap","Central, North, and South Kitsap"
+54,35,"Poulsbo",3,"HCT","North Kitsap","Kitsap","North Kitsap","Central, North, and South Kitsap"
+55,35,"Uninc Urban Kitsap",1,"Metro","Central Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+56,35,"Uninc Urban Kitsap",2,"Core","Central Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+57,35,"Uninc Urban Kitsap",3,"HCT","North Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+58,35,"Uninc Urban Kitsap",5,"UU","Central Kitsap","Kitsap","Central Kitsap","Central, North, and South Kitsap"
+59,53,"Auburn",2,"Core","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+60,53,"Bonney Lake",6,"Rural","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+61,53,"Bonney Lake",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+62,53,"Buckley",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+63,53,"Carbonado",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+64,53,"DuPont",3,"HCT","SW Pierce","Pierce","SW Pierce","SW Pierce"
+65,53,"Eatonville",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+66,53,"Edgewood",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+67,53,"Enumclaw",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+68,53,"Fife",3,"HCT","Tacoma","Pierce","Tacoma","Peninsula and Tacoma"
+69,53,"Fircrest",3,"HCT","SW Pierce","Pierce","SW Pierce","SW Pierce"
+70,53,"Gig Harbor",4,"CitiesTowns","Peninsula","Pierce","Peninsula","Peninsula and Tacoma"
+71,53,"Lakewood",2,"Core","SW Pierce","Pierce","SW Pierce","SW Pierce"
+72,53,"Milton",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+73,53,"Orting",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+74,53,"Pacific",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+75,53,"Pierce Rural",6,"Rural","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+76,53,"Puyallup",2,"Core","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+77,53,"Roy",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+78,53,"Ruston",4,"CitiesTowns","Tacoma","Pierce","Tacoma","Peninsula and Tacoma"
+79,53,"South Prairie",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+80,53,"Steilacoom",4,"CitiesTowns","SW Pierce","Pierce","SW Pierce","SW Pierce"
+81,53,"Sumner",3,"HCT","Pierce Other","Pierce","Pierce Other","Pierce Other (1)"
+82,53,"Tacoma",1,"Metro","Tacoma","Pierce","Tacoma","Peninsula and Tacoma"
+83,53,"Uninc Urban Pierce",3,"HCT","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+84,53,"Uninc Urban Pierce",5,"UU","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+85,53,"University Place",2,"Core","SW Pierce","Pierce","SW Pierce","SW Pierce"
+86,53,"Wilkeson",4,"CitiesTowns","Pierce Other","Pierce","Pierce Other","Pierce Other (2)"
+87,61,"Arlington",6,"Rural","Everett","Snohomish","Everett","Everett"
+88,61,"Arlington",3,"HCT","Everett","Snohomish","Everett","Everett"
+89,61,"Bothell",2,"Core","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (2)"
+90,61,"Brier",4,"CitiesTowns","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (2)"
+91,61,"Darrington",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+92,61,"Edmonds",3,"HCT","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (1)"
+93,61,"Everett",6,"Rural","Snohomish Other","Snohomish","Everett","Everett"
+94,61,"Everett",1,"Metro","Everett","Snohomish","Everett","Everett"
+95,61,"Gold Bar",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+96,61,"Granite Falls",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+97,61,"Index",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+98,61,"Lake Stevens",4,"CitiesTowns","Everett","Snohomish","Everett","Everett"
+99,61,"Lynnwood",2,"Core","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (1)"
+100,61,"Marysville",6,"Rural","NW Snohomish","Snohomish","Everett","Everett"
+101,61,"Marysville",3,"HCT","Everett","Snohomish","Everett","Everett"
+102,61,"Mill Creek",3,"HCT","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (2)"
+103,61,"Monroe",6,"Rural","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+104,61,"Monroe",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+105,61,"Mountlake Terrace",3,"HCT","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (1)"
+106,61,"Mukilteo",3,"HCT","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (1)"
+107,61,"Snohomish",6,"Rural","Snohomish Other","Snohomish","Everett","Everett"
+108,61,"Snohomish",4,"CitiesTowns","Everett","Snohomish","Everett","Everett"
+109,61,"Snohomish Rural",6,"Rural","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+110,61,"Stanwood",6,"Rural","NW Snohomish","Snohomish","NW Snohomish","NW Snohomish"
+111,61,"Stanwood",4,"CitiesTowns","NW Snohomish","Snohomish","NW Snohomish","NW Snohomish"
+112,61,"Sultan",4,"CitiesTowns","Snohomish Other","Snohomish","Snohomish Other","Snohomish Other"
+113,61,"Uninc Urban Snohomish",3,"HCT","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (2)"
+114,61,"Uninc Urban Snohomish",5,"UU","Everett","Snohomish","Everett","Everett"
+115,61,"Woodway",4,"CitiesTowns","SW Snohomish","Snohomish","SW Snohomish","SW Snohomish (1)"

@@ -27,9 +27,7 @@ splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
 ctrlhct.lookup <- fread(file.path('data','control_hcts.csv'))
 ctrl.lookup <- fread(file.path('data','controls.csv')) # varname should be "controls" formerly ctrlhct
-city18.lookup <- fread(file.path('data', "cities18.csv")) # has a wrong record (duplicate of Enumclaw placed in Pierce)
-city23.lookup <- fread(file.path('data', "cities23.csv"))
-city.lookup <- merge(city23.lookup, city18.lookup[, .(city_id, county, large_area, lgarea_group)])
+city.lookup <- fread(file.path('data', "cities23.csv"))
 rgs.lookup <- fread(file.path('data', "regional_geography.csv"))
 
 # spatial features
