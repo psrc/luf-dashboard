@@ -98,19 +98,77 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       setnames(t, "sector", "Sector")
       t <- calc.cols.tsTable(t, tsyear, runs, baseyear)
 
-      setcolorder(t, c("Sector",
-                       paste0(b1, "_", runnames[1]),
-                       paste0(b2, "_", runnames[2]),
-                       paste0(tsyear, "_", runnames[1]),
-                       "r1.baseyr",
-                       "r1.baseyr.per",
-                       "r1.avgann",
-                       paste0(tsyear, "_", runnames[2]),
-                       "r2.baseyr",
-                       "r2.baseyr.per",
-                       "r2.avgann",
-                       "Change",
-                       "Per.Change"))
+      # are the baseyears the same as the target year?
+      
+      if(b1 == tsyear) {
+        b1_run1 <- paste0(b1, "_", runnames[1])
+        b1_run1_new <- paste0(b1_run1, "_b")
+        t <- t[, (b1_run1_new) := get(eval(b1_run1))]
+        
+        setcolorder(t, c("Sector",
+                         b1_run1_new,
+                         paste0(b2, "_", runnames[2]),
+                         paste0(tsyear, "_", runnames[1]),
+                         "r1.baseyr",
+                         "r1.baseyr.per",
+                         "r1.avgann",
+                         paste0(tsyear, "_", runnames[2]),
+                         "r2.baseyr",
+                         "r2.baseyr.per",
+                         "r2.avgann",
+                         "Change",
+                         "Per.Change"))
+       
+      } else if(b2 == tsyear) {
+        b2_run2 <- paste0(b2, "_", runnames[2])
+        b2_run2_new <- paste0(b2_run2, "_b")
+        t1 <- t1[, (b2_run2_new) := get(eval(b2_run2))]
+        
+        # what if both runs' byear are the same as tsyear?
+        setcolorder(t, c("Sector",
+                         paste0(b1, "_", runnames[1]),
+                         b2_run2_new,
+                         paste0(tsyear, "_", runnames[1]),
+                         "r1.baseyr",
+                         "r1.baseyr.per",
+                         "r1.avgann",
+                         paste0(tsyear, "_", runnames[2]),
+                         "r2.baseyr",
+                         "r2.baseyr.per",
+                         "r2.avgann",
+                         "Change",
+                         "Per.Change"))
+
+        
+      } else {
+        setcolorder(t, c("Sector",
+                         paste0(b1, "_", runnames[1]),
+                         paste0(b2, "_", runnames[2]),
+                         paste0(tsyear, "_", runnames[1]),
+                         "r1.baseyr",
+                         "r1.baseyr.per",
+                         "r1.avgann",
+                         paste0(tsyear, "_", runnames[2]),
+                         "r2.baseyr",
+                         "r2.baseyr.per",
+                         "r2.avgann",
+                         "Change",
+                         "Per.Change"))
+      }
+
+      # setcolorder(t, c("Sector",
+      #                  paste0(b1, "_", runnames[1]),
+      #                  paste0(b2, "_", runnames[2]),
+      #                  paste0(tsyear, "_", runnames[1]),
+      #                  "r1.baseyr",
+      #                  "r1.baseyr.per",
+      #                  "r1.avgann",
+      #                  paste0(tsyear, "_", runnames[2]),
+      #                  "r2.baseyr",
+      #                  "r2.baseyr.per",
+      #                  "r2.avgann",
+      #                  "Change",
+      #                  "Per.Change"))
       t1 <- t[, c(2:5, 8:9, 12) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:5, 8:9, 12)]
       
       sketch <- sketch.basic(colnames(t1)[1], b1, b2, tsyear, runnames[1], runnames[2])
