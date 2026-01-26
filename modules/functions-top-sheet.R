@@ -162,9 +162,23 @@ calc.cols.tsTable <- function(table, tsyear, runs, baseyear){
   
   baseyear_run1 <- str_extract(baseyear[run == runs[1], baseyear][[1]], "\\d+")
   baseyear_run2 <- str_extract(baseyear[run == runs[2], baseyear][[1]], "\\d+")
-
+# browser()
   t1 <- table
-  setcolorder(t1, c("Sector", base_run1, base_run2, target_run1, target_run2))
+  
+  # are the baseyears the same as the target year?
+  if(baseyear_run1 == tsyear) {
+    baseyear_run1 <- paste0(base_run1, "_b")
+    t1 <- t1[, (baseyear_run1) := get(eval(base_run1))]
+    setcolorder(t1, c("Sector", baseyear_run1, base_run2, target_run1, target_run2))
+    
+  } else if(baseyear_run2 == tsyear) {
+    baseyear_run2 <- paste0(base_run2, "_b")
+    t1 <- t1[, (baseyear_run2) := get(eval(base_run2))]
+    
+    setcolorder(t1, c("Sector", base_run1, base_run2, target_run1, target_run2))
+  } else {
+    setcolorder(t1, c("Sector", base_run1, base_run2, target_run1, target_run2))
+  }
   
   t1[, Change := (t1[[target_run1]]-t1[[target_run2]])] # change in 2050(target years)
   t1[, Per.Change := round((Change/t1[[target_run2]])*100, 2)] # change/2050 run2
@@ -185,53 +199,142 @@ create.exp.tsTable <- function(table, runs, tsyear, baseyear){
 
   b1 <- baseyear[run == runs[1], .(baseyear)][[1]] |> str_extract("\\d+")
   b2 <- baseyear[run == runs[2], .(baseyear)][[1]] |> str_extract("\\d+")
+  
+  if(b1 == tsyear) {
+    b1_run1_pop <- paste0(b1, "_Population_", runnames[1])
+    b1_run1_pop_new <- paste0(b1_run1_pop, "_b")
+    
+    b1_run1_emp <- paste0(b1, "_Employment_", runnames[1])
+    b1_run1_emp_new <- paste0(b1_run1_emp, "_b")
+    table <- table[, (b1_run1_pop_new) := get(eval(b1_run1_pop))
+                   ][, (b1_run1_emp_new) := get(eval(b1_run1_emp))]
+    
+    setcolorder(table,
+                c("Name",
+                  b1_run1_pop_new,
+                  # paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
+                  paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
+                  paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
+                  paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
+                  b1_run1_emp_new,
+                  # paste0(b1, "_", "Employment","_", runnames[1]),
+                  paste0(b2, "_", "Employment","_", runnames[2]),
+                  paste0(tsyear, "_", "Employment","_", runnames[1]),
+                  paste0(tsyear, "_", "Employment","_", runnames[2])
+                ))
+   
+    
+  } else if(b2 == tsyear) {
+    b2_run2_pop <- paste0(b2, "_Population_", runnames[2])
+    b2_run2_pop_new <- paste0(b2_run2_pop, "_b")
+    
+    b2_run2_emp <- paste0(b2, "_Employment_", runnames[2])
+    b2_run2_emp_new <- paste0(b2_run2_emp, "_b")
+    table <- table[, (b2_run2_pop_new) := get(eval(b2_run2_pop))
+    ][, (b2_run2_emp_new) := get(eval(b2_run2_emp))]
+    
+    # what if both runs' byear are the same as tsyear?
+    setcolorder(table,
+                c("Name",
+                  paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
+                  b2_run2_pop_new,
+                  # paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
+                  paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
+                  paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
+                  
+                  paste0(b1, "_", "Employment","_", runnames[1]),
+                  b2_run2_emp_new,
+                  # paste0(b2, "_", "Employment","_", runnames[2]),
+                  paste0(tsyear, "_", "Employment","_", runnames[1]),
+                  paste0(tsyear, "_", "Employment","_", runnames[2])
+                ))
+  
+    
+    
+  } else {
+    setcolorder(table,
+                c("Name",
+                  paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
+                  paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
+                  paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
+                  paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
+                  
+                  paste0(b1, "_", "Employment","_", runnames[1]),
+                  paste0(b2, "_", "Employment","_", runnames[2]),
+                  paste0(tsyear, "_", "Employment","_", runnames[1]),
+                  paste0(tsyear, "_", "Employment","_", runnames[2])
+                ))
+  }
 
-  setcolorder(table,
-              c("Name",
-                paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
-                paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
-                paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
-                paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
-                
-                paste0(b1, "_", "Employment","_", runnames[1]),
-                paste0(b2, "_", "Employment","_", runnames[2]),
-                paste0(tsyear, "_", "Employment","_", runnames[1]),
-                paste0(tsyear, "_", "Employment","_", runnames[2])
-              ))
-
+  # setcolorder(table,
+  #             c("Name",
+  #               paste0(b1, "_", "Population","_", runnames[1]), #b1 run1
+  #               paste0(b2, "_", "Population","_", runnames[2]), #b2 run2
+  #               paste0(tsyear, "_", "Population","_", runnames[1]), #f1 run1
+  #               paste0(tsyear, "_", "Population","_", runnames[2]), #f2 run2
+  #               
+  #               paste0(b1, "_", "Employment","_", runnames[1]),
+  #               paste0(b2, "_", "Employment","_", runnames[2]),
+  #               paste0(tsyear, "_", "Employment","_", runnames[1]),
+  #               paste0(tsyear, "_", "Employment","_", runnames[2])
+  #             ))
+  # browser()
+  
   t1 <- table[, Pop.Change := (table[[4]]-table[[5]]) # target year change
   ][, Pop.Per.Change := round((Pop.Change/table[[5]])*100, 2)
   ][, Emp.Change := (table[[8]]-table[[9]])
   ][, Emp.Per.Change := round((Emp.Change/table[[9]])*100, 2)]
   
-  setcolorder(t1,
-              c("Name",
-                paste0(b1, "_", "Population","_", runnames[1]),
-                paste0(b2, "_", "Population","_", runnames[2]),
-                paste0(tsyear, "_", "Population","_", runnames[1]),
-                paste0(tsyear, "_", "Population","_", runnames[2]),
-                "Pop.Change",
-                "Pop.Per.Change",
-                paste0(b1, "_", "Employment","_", runnames[1]),
-                paste0(b2, "_", "Employment","_", runnames[2]),
-                paste0(tsyear, "_", "Employment","_", runnames[1]),
-                paste0(tsyear, "_", "Employment","_", runnames[2]),
-                "Emp.Change",
-                "Emp.Per.Change"))
+  all_columns <-  c("Name",
+                    paste0(b1, "_", "Population","_", runnames[1]),
+                    paste0(b2, "_", "Population","_", runnames[2]),
+                    paste0(tsyear, "_", "Population","_", runnames[1]),
+                    paste0(tsyear, "_", "Population","_", runnames[2]),
+                    "Pop.Change",
+                    "Pop.Per.Change",
+                    paste0(b1, "_", "Employment","_", runnames[1]),
+                    paste0(b2, "_", "Employment","_", runnames[2]),
+                    paste0(tsyear, "_", "Employment","_", runnames[1]),
+                    paste0(tsyear, "_", "Employment","_", runnames[2]),
+                    "Emp.Change",
+                    "Emp.Per.Change")
   
-  setnames(t1, colnames(t1), c("Name",
-                               paste0(b1, "_", "Pop","_", runnames[1]),
-                               paste0(b2, "_", "Pop","_", runnames[2]),
-                               paste0(tsyear, "_", "Pop","_", runnames[1]),
-                               paste0(tsyear, "_", "Pop","_", runnames[2]),
-                               "Pop.Change",
-                               "Pop.Per.Change",
-                               paste0(b1, "_", "Emp","_", runnames[1]),
-                               paste0(b2, "_", "Emp","_", runnames[2]),
-                               paste0(tsyear, "_", "Emp","_", runnames[1]),
-                               paste0(tsyear, "_", "Emp","_", runnames[2]),
-                               "Emp.Change",
-                               "Emp.Per.Change"))
+  if(b1 == tsyear) {
+    all_columns <- replace(all_columns, c(2, 8), c(b1_run1_pop_new, b1_run1_emp_new))
+  } else if(b2 == tsyear) {
+    all_columns <- replace(all_columns, c(3, 9), c(b1_run1_pop_new, b1_run1_emp_new))
+  }
+  
+  setcolorder(t1, all_columns)
+  # setcolorder(t1,
+  #             c("Name",
+  #               paste0(b1, "_", "Population","_", runnames[1]),
+  #               paste0(b2, "_", "Population","_", runnames[2]),
+  #               paste0(tsyear, "_", "Population","_", runnames[1]),
+  #               paste0(tsyear, "_", "Population","_", runnames[2]),
+  #               "Pop.Change",
+  #               "Pop.Per.Change",
+  #               paste0(b1, "_", "Employment","_", runnames[1]),
+  #               paste0(b2, "_", "Employment","_", runnames[2]),
+  #               paste0(tsyear, "_", "Employment","_", runnames[1]),
+  #               paste0(tsyear, "_", "Employment","_", runnames[2]),
+  #               "Emp.Change",
+  #               "Emp.Per.Change"))
+  
+  # # is the set below necessary? doesn't translate to excel output via DT
+  # setnames(t1, colnames(t1), c("Name",
+  #                              paste0(b1, "_", "Pop","_", runnames[1]),
+  #                              paste0(b2, "_", "Pop","_", runnames[2]),
+  #                              paste0(tsyear, "_", "Pop","_", runnames[1]),
+  #                              paste0(tsyear, "_", "Pop","_", runnames[2]),
+  #                              "Pop.Change",
+  #                              "Pop.Per.Change",
+  #                              paste0(b1, "_", "Emp","_", runnames[1]),
+  #                              paste0(b2, "_", "Emp","_", runnames[2]),
+  #                              paste0(tsyear, "_", "Emp","_", runnames[1]),
+  #                              paste0(tsyear, "_", "Emp","_", runnames[2]),
+  #                              "Emp.Change",
+  #                              "Emp.Per.Change"))
   t1[, c(2:6,8:12) := lapply(.SD, FUN=function(x) prettyNum(x, big.mark=",")), .SDcols = c(2:6,8:12)]
 }
 
