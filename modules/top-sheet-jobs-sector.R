@@ -99,9 +99,22 @@ dt_jobs_sector_server <- function(id, paths, runs, tsyear, baseyear, title) {
       t <- calc.cols.tsTable(t, tsyear, runs, baseyear)
 
       # are the baseyears the same as the target year?
-      
       if(b1 == tsyear && b2 == tsyear) {
-        break
+        
+        setcolorder(t, c("Sector",
+                         paste0(b1, "_", runnames[1], "_b"),
+                         paste0(b2, "_", runnames[2], "_b"),
+                         paste0(tsyear, "_", runnames[1]),
+                         "r1.baseyr",
+                         "r1.baseyr.per",
+                         "r1.avgann",
+                         paste0(tsyear, "_", runnames[2]),
+                         "r2.baseyr",
+                         "r2.baseyr.per",
+                         "r2.avgann",
+                         "Change",
+                         "Per.Change"))
+        
       } else if(b1 == tsyear & (b2 != tsyear)) {
         b1_run1 <- paste0(b1, "_", runnames[1])
         b1_run1_new <- paste0(b1_run1, "_b")
