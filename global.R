@@ -27,7 +27,10 @@ splaces.lookup <- fread(file.path('data', 'SpecialPlaces.csv'))
 rgc.lookup <- fread(file.path('data', "growth_centers.csv")) %>% subset(growth_center_id >= 500)
 ctrlhct.lookup <- fread(file.path('data','control_hcts.csv'))
 ctrl.lookup <- fread(file.path('data','controls.csv')) # varname should be "controls" formerly ctrlhct
+
 city.lookup <- fread(file.path('data', "cities23.csv"))
+setnames(city.lookup, "old_lgarea_group", "lgarea_group")
+
 rgs.lookup <- fread(file.path('data', "regional_geography.csv"))
 
 # spatial features
